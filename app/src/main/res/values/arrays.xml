@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="resicon">
+        <item>@android:drawable/ic_dialog_alert</item>
+        <item>@android:drawable/ic_dialog_dialer</item>
+        <item>@android:drawable/ic_dialog_email</item>
+        <item>@android:drawable/ic_dialog_info</item>
+        <item>@android:drawable/ic_dialog_map</item>
+        <item>@android:drawable/ic_menu_camera</item>
+        <item>@android:drawable/ic_menu_compass</item>
+        <item>@android:drawable/ic_menu_gallery</item>
+        <item>@android:drawable/ic_menu_my_calendar</item>
+        <item>@android:drawable/ic_menu_myplaces</item>
+        <item>@android:drawable/ic_menu_slideshow</item>
+        <item>@android:drawable/ic_menu_today</item>
+
+        <item>@android:drawable/ic_menu_gallery</item>
+        <item>@android:drawable/ic_menu_my_calendar</item>
+        <item>@android:drawable/ic_menu_myplaces</item>
+        <item>@android:drawable/ic_menu_slideshow</item>
+        <item>@android:drawable/ic_menu_today</item>
+    </array>
+    <array name="restext">
+        <item>"Azione"</item>
+        <item>"Horror"</item>
+        <item>"Animazione"</item>
+        <item>"Avventura"</item>
+        <item>"Biografico"</item>
+        <item>"Commedia"</item>
+        <item>"Documentario"</item>
+        <item>"Drammatico"</item>
+        <item>"Erotico"</item>
+        <item>"Fantascienza"</item>
+        <item>"Fantasy"</item>
+        <item>"Guerra"</item>
+        <item>"Musical"</item>
+        <item>"Storico"</item>
+        <item>"Thriller"</item>
+        <item>"Fantasy"</item>
+        <item>"Western"</item>
+    </array>
+</resources>

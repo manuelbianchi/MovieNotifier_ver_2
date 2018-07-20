@@ -1,5 +1,6 @@
 package com.example.msnma.movienotifier;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -45,5 +46,15 @@ public class SecondActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /** Called when the user taps the Send button */
+    public void pressAccountButton(MenuItem item)
+    {
+        Intent intent = new Intent(this, AccountActivity.class);
+        //EditText editText = (EditText) findViewById(R.id.editText);
+        //String message = editText.getText().toString();
+        //intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
     }
 }

@@ -28,6 +28,17 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         }
 
+    /** Called when the user taps the Send button */
+    /*public void pressAccountButton(View view)
+    {
+        Intent intent = new Intent(this, AccountActivity.class);
+        //EditText editText = (EditText) findViewById(R.id.editText);
+        //String message = editText.getText().toString();
+        //intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
+    }*/
+
+
         /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,5 +72,14 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    public void pressAccountButton(MenuItem item) {
+        Intent intent = new Intent(this, AccountActivity.class);
+        //EditText editText = (EditText) findViewById(R.id.editText);
+        //String message = editText.getText().toString();
+        //intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
     }
 }

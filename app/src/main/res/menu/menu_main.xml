@@ -3,6 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.msnma.movienotifier.MainActivity">
     <item
+        android:id="@+id/action_account"
+        android:icon="@drawable/ic_baseline_person_24px"
+        android:onClick="pressAccountButton"
+        android:title="@string/action_account"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
