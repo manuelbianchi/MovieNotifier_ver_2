@@ -23,13 +23,16 @@ public class GenreViewActivity extends AppCompatActivity {
 
         // Instanciating an array list (you don't need to do this,
         // you already have yours).
-        ArrayList<String> your_array_list; //= new ArrayList<String>();
+        ArrayList<String> your_array_list = new ArrayList<String>();
         /*your_array_list.add("foo");
         your_array_list.add("bar");*/
 
-        your_array_list = AccountActivity.getSelectedString();
+        //your_array_list = AccountActivity.getSelectedString();
 
 
+        if(getIntent()!=null){
+            your_array_list = getIntent().getStringArrayListExtra("your_list");
+        }
 
 
 

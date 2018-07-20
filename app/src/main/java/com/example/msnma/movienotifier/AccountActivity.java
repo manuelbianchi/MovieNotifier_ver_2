@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AccountActivity extends AppCompatActivity {
-    private static ArrayList <String> itemsChkStr = new ArrayList<String>();
+
     public class Item {
         boolean checked;
         Drawable ItemDrawable;
@@ -159,15 +159,6 @@ public class AccountActivity extends AppCompatActivity {
                         Toast.LENGTH_LONG).show();
             }});
 
-        //Arraylist di tipo stringa con elementi checked
-
-        for (int i=0; i<items.size(); i++){
-            if (items.get(i).isChecked()){
-                //str += i + "\n";
-                itemsChkStr.add(items.get(i).ItemString);
-            }
-        }
-
         btnLookup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -217,11 +208,22 @@ public class AccountActivity extends AppCompatActivity {
 
     public void pressDoneButton(View view)
     {
+        //Arraylist di tipo stringa con elementi checked
+        ArrayList <String> itemsChkStr = new ArrayList<String>();
+
+        for (int i=0; i<items.size(); i++){
+            if (items.get(i).isChecked()){
+                //str += i + "\n";
+                itemsChkStr.add(items.get(i).ItemString);
+            }
+        }
         //itemsChecks();
-        Intent intent = new Intent(this, GenreViewActivity.class);
         //EditText editText = (EditText) findViewById(R.id.editText);
         //String message = editText.getText().toString();
         //intent.putExtra(EXTRA_MESSAGE, message);
+        //itemsChecks();
+        Intent intent = new Intent(this, GenreViewActivity.class);
+        intent.putStringArrayListExtra("your_list",itemsChkStr);
         startActivity(intent);
     }
 
@@ -237,9 +239,7 @@ public class AccountActivity extends AppCompatActivity {
 
     }*/
 
-    public static ArrayList <String> getSelectedString(){
-        return itemsChkStr;
-    }
+
 
 }
     /*@Override
