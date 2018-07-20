@@ -62,6 +62,14 @@
         <item>2</item>
         <item>3</item>
     </string-array>
+    <!-- da sostituire con i film -->
+    <string-array name="query_suggestions">
+        <item>Furniture</item>
+        <item>Women Fashion</item>
+        <item>Hotels</item>
+        <item>Man Fashion</item>
+        <item>Electronics Appliances</item>
+    </string-array>
 
     <string-array name="multi_select_list_preference_default_value" />
 
