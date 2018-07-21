@@ -21,10 +21,9 @@
         <item>@android:drawable/ic_menu_today</item>
     </array>
     <array name="restext">
-        <item>"Azione"</item>
-        <item>"Horror"</item>
         <item>"Animazione"</item>
         <item>"Avventura"</item>
+        <item>"Azione"</item>
         <item>"Biografico"</item>
         <item>"Commedia"</item>
         <item>"Documentario"</item>
@@ -33,10 +32,10 @@
         <item>"Fantascienza"</item>
         <item>"Fantasy"</item>
         <item>"Guerra"</item>
+        <item>"Horror"</item>
         <item>"Musical"</item>
         <item>"Storico"</item>
         <item>"Thriller"</item>
-        <item>"Fantasy"</item>
         <item>"Western"</item>
     </array>
 </resources>
