@@ -17,8 +17,7 @@
         <item>@android:drawable/ic_menu_gallery</item>
         <item>@android:drawable/ic_menu_my_calendar</item>
         <item>@android:drawable/ic_menu_myplaces</item>
-        <item>@android:drawable/ic_menu_slideshow</item>
-        <item>@android:drawable/ic_menu_today</item>
+        
     </array>
     <array name="restext">
         <item>"Animazione"</item>
