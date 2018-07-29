@@ -12,12 +12,12 @@
         android:title="@string/action_account"
         app:showAsAction="ifRoom" />
 
-    <item
+    <!--<item
         android:id="@+id/action_search"
         android:orderInCategory="100"
         android:icon="@drawable/ic_search_black_24dp"
         app:showAsAction="ifRoom"
-        android:title="search" />
+        android:title="search" />-->
 
 
     <!-- Settings, should always be in the overflow -->

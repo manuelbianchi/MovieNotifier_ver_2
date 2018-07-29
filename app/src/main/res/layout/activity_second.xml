@@ -4,11 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SecondActivity">
+    tools:context=".SecondActivity"
+    tools:layout_editor_absoluteY="25dp">
+
     <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
+        android:id="@+id/appBarLayout"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/my_toolbar"
@@ -17,13 +26,42 @@
             android:background="@color/colorPrimary"
             android:elevation="4dp"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            tools:ignore="UnusedAttribute"
-            />
-        <com.miguelcatalan.materialsearchview.MaterialSearchView
-            android:id="@+id/search_view"
+            tools:ignore="UnusedAttribute" />
+
+        <!--<com.miguelcatalan.materialsearchview.MaterialSearchView
+            android:id="@+id/search"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-     <!--android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
+            android:layout_height="wrap_content" />-->
+
+        <android.support.v7.widget.SearchView
+            android:id="@+id/searchbox"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:layout_alignParentRight="true"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:queryHint="Search Movie">
+            </android.support.v7.widget.SearchView>
+
+
+
+
+        <!--android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
+
+        <!--<SearchView
+            android:id="@+id/txtsearch"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="Search Movie"
+            android:textColorHint="#66000000"
+            android:textColor="@color/colorAccent" />-->
+        <!--<android.support.v7.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:elevation="4dp" />-->
 
     </android.support.design.widget.AppBarLayout>
 </android.support.constraint.ConstraintLayout>
