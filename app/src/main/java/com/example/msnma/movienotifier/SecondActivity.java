@@ -19,10 +19,6 @@ import android.widget.ListView;
 //import android.widget.SearchView;
 import android.widget.Toast;
 
-//import com.miguelcatalan.materialsearchview.MaterialSearchView;
-//import com.miguelcatalan.materialsearchview.MaterialSearchView.OnQueryTextListener;
-//import com.miguelcatalan.materialsearchview.SearchAdapter;
-
 public class SecondActivity extends AppCompatActivity {
     //MaterialSearchView searchView;
     //SearchView searchView;
@@ -39,74 +35,16 @@ public class SecondActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         // Get a support ActionBar corresponding to this toolbar
         ActionBar ab = getSupportActionBar();
-        /*searchView = (MaterialSearchView) findViewById(R.id.search);
-        searchView.setSuggestions(getResources().getStringArray(R.array.query_suggestions));
-        searchView.setEllipsize(true);
-        searchView.setOnQueryTextListener(new OnQueryTextListener()
-        {
-            @Override
-            public boolean onQueryTextSubmit(String query)
-            {
-                Toast.makeText(getApplicationContext(), query, Toast.LENGTH_SHORT).show();
-                return false;
-            }
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-
-        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
-            @Override
-            public void onSearchViewShown() {
-            }
-
-            @Override
-            public void onSearchViewClosed() {
-            }
-        });
-        /*int id = searchView.getContext().getResources().getIdentifier("android:id/txtsearch", null, null);
-        EditText editText = (EditText) searchView.findViewById(id);
-        editText.setOnClickListener(listener);*/
-        /*searchViewCode();
-        // Enable the Up button*/
-        //searchView = (MaterialSearchView) findViewById(R.id.searchView);
-        //searchView.setQueryHint("Enter search");
-        //databaseObject = new DbBackend(SecondActivity.this);
-        //listView = (ListView)findViewById(R.id.listView);
-        /*searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
-        {
-            @Override
-            public boolean onQueryTextSubmit(String query)
-            {
-                List<ItemObject> dictionaryObject = databaseObject.searchDictionaryWords(query);
-                SearchAdapter mSearchAdapter = new SearchAdapter(SecondActivity.this, dictionaryObject);
-                listView.setAdapter(mSearchAdapter);
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-                {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-                    {
-                    }
-                });
-                return true;
-            }
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });*/
 
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView=(SearchView) findViewById(R.id.searchbox);
         searchView.setQueryHint("Search movie...");
+
         EditText searchEditText = (EditText)searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        //searchEditText.setTextColor(getResources().getColor(R.color.black));
-        //searchEditText.setHintTextColor(getResources().getColor(R.color.ltblack));
         searchView.setBackgroundColor(Color.DKGRAY);
         searchView.setFocusable(true);// searchView is null
-        searchView.setFocusableInTouchMode(true);
+        searchView.setIconified(false);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         ab.setDisplayHomeAsUpEnabled(true);
     }

@@ -1,10 +1,14 @@
 package com.example.msnma.movienotifier;
 
 
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -45,14 +49,14 @@ public class GenreViewActivity extends AppCompatActivity {
                 your_array_list);
 
         lv.setAdapter(arrayAdapter1);
-
-
     }
 
+    public void pressEditButton(View view)
+    {
+        Intent intent = new Intent(this, AccountActivity.class);
+        //EditText editText = (EditText) findViewById(R.id.editText);
+        //String message = editText.getText().toString();
+        //intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
+    }
 }
-    /*@Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_genre_view);
-    }*/
-

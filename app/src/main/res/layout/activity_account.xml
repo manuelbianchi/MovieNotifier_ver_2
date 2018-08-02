@@ -7,29 +7,35 @@
     tools:context=".AccountActivity">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Genre"
-        android:textStyle="bold" />
+        android:gravity="center"
+        android:text="Genres"
+        android:textColor="@color/black"
+        android:textSize="36sp"
+        android:textStyle="bold|italic" />
     <!--android:autoLink="web"-->
 
     <Button
         android:id="@+id/lookup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Look up" />
+        android:text="Look up"
+        android:textSize="16dp" />
 
     <Button
         android:id="@+id/done"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="pressDoneButton"
-        android:text="Done" />
+        android:text="Done"
+        android:textSize="16dp" />
 
     <ListView
         android:id="@+id/listview"
-        android:layout_width="match_parent"
-        android:layout_height="544dp" />
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"/>
 
 </LinearLayout>

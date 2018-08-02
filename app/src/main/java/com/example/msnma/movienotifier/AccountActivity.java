@@ -119,9 +119,6 @@ public class AccountActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     boolean newState = !list.get(position).isChecked();
                     list.get(position).checked = newState;
-                    Toast.makeText(getApplicationContext(),
-                            itemStr + "setOnClickListener\nchecked: " + newState,
-                            Toast.LENGTH_LONG).show();
                 }
             });
 
