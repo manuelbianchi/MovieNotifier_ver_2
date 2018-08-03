@@ -17,6 +17,7 @@
         android:textStyle="bold|italic" />
     <!--android:autoLink="web"-->
 
+
     <Button
         android:id="@+id/lookup"
         android:layout_width="match_parent"

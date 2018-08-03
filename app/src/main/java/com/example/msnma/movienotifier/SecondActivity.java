@@ -52,6 +52,7 @@ public class SecondActivity extends AppCompatActivity {
 
     }   /*click alt+insert key */
 
+
     //da cambiare per il menu secondactivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu)

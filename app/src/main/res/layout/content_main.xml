@@ -8,6 +8,7 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
 
+
     <TextView
         android:id="@+id/textViewWelcome"
         style="@style/Widget.MaterialComponents.TextInputEditText.OutlinedBox"

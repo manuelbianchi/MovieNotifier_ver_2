@@ -40,6 +40,7 @@ public class GenreViewActivity extends AppCompatActivity {
 
 
 
+
         // This is the array adapter, it takes the context of the activity as a
         // first parameter, the type of list view as a second parameter and your
         // array as a third parameter.

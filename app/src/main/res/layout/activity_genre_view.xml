@@ -22,6 +22,7 @@
         android:textStyle="bold|italic" />
     <!--android:autoLink="web"-->
 
+
     <ListView
         android:id="@+id/listview"
         android:layout_width="fill_parent"

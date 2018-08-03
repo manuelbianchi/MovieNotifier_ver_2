@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.msnma.movienotifier.SecondActivity">
 
+
     <!--"Account", should appear as action button if possible -->
     <item
         android:id="@+id/action_account"

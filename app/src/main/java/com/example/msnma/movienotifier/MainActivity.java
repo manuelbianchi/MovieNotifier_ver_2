@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         }
 
+
     /** Called when the user taps the Send button */
     /*public void pressAccountButton(View view)
     {
