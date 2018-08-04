@@ -35,7 +35,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.msnma.movienotifier.SecondActivity" />
         </activity>
-        <activity android:name=".GenreViewActivity"></activity>
+        <activity android:name=".GenreViewActivity" />
+        <activity android:name=".CoreActivity"></activity>
     </application>
 
 </manifest>

@@ -60,4 +60,10 @@ public class GenreViewActivity extends AppCompatActivity {
         //intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
     }
+
+    public void pressNextButton(View view)
+    {
+        Intent intent = new Intent( this, CoreActivity.class);
+        startActivity(intent);
+    }
 }
