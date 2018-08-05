@@ -3,6 +3,7 @@ package com.example.msnma.movienotifier;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -114,18 +115,40 @@ public class AccountActivity extends AppCompatActivity {
             });
             */
 
-            viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
+            final ViewHolder finalViewHolder = viewHolder;
+            viewHolder.text.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view) {
+                    boolean newState = !list.get(position).isChecked();
+                    list.get(position).checked = newState;
+                        finalViewHolder.checkBox.setChecked(list.get(position).isChecked());
+                }
+
+            });
+
+
+
+            viewHolder.checkBox.setOnClickListener(new View.OnClickListener()
+            {
                 @Override
                 public void onClick(View view) {
                     boolean newState = !list.get(position).isChecked();
                     list.get(position).checked = newState;
                 }
+
             });
 
-            viewHolder.checkBox.setChecked(isChecked(position));
+
+
+
+                viewHolder.checkBox.setChecked(isChecked(position));
+
 
             return rowView;
         }
+
+
     }
 
 
@@ -221,6 +244,10 @@ public class AccountActivity extends AppCompatActivity {
         //intent.putExtra(EXTRA_MESSAGE, message);
         //itemsChecks();
         Intent intent = new Intent(this, GenreViewActivity.class);
+
+        //funzione chiamata per salvare i dati
+        writeList(this, itemsChkStr, "generi");
+
         intent.putStringArrayListExtra("your_list",itemsChkStr);
         startActivity(intent);
     }
@@ -236,6 +263,44 @@ public class AccountActivity extends AppCompatActivity {
         viewArray(arrGenre);
 
     }*/
+
+
+    //nuovo codice per salvare i dati
+    public static void writeList(Context context, List<String> list, String prefix)
+    {
+        SharedPreferences prefs = context.getSharedPreferences("YourApp", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        int size = prefs.getInt(prefix+"_size", 0);
+
+        // clear the previous data if exists
+        for(int i=0; i<size; i++)
+            editor.remove(prefix+"_"+i);
+
+        // write the current list
+        for(int i=0; i<list.size(); i++)
+            editor.putString(prefix+"_"+i, list.get(i));
+
+        editor.putInt(prefix+"_size", list.size());
+        editor.commit();
+    }
+
+
+
+    /* esempio */
+/*
+    List<String> animals = new ArrayList<String>();
+animals.add("cat");
+animals.add("bear");
+animals.add("dog");
+
+    writeList(someContext, animals, "animal");*/
+
+
+/* come riprendere i dati */
+
+    //List<String> animals = readList (someContext, "animal");
+
 
 
 

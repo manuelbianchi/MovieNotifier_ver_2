@@ -20,9 +20,21 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+        //nuovo codice per far partire una activity diversa
+
+        //se la lista è vuota parte la main activity
+        if(GenreViewActivity.readList(this, "generi").isEmpty()) {
+            setContentView(R.layout.activity_main);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+        }
+        //altrimenti se la lista non è vuota tu parti con questa activity
+        else
+        {
+            Intent intent = new Intent(this, GenreViewActivity.class);
+            startActivity(intent);
+        }
 
 
     }

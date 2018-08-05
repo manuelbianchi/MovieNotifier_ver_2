@@ -1,7 +1,9 @@
 package com.example.msnma.movienotifier;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -28,6 +30,7 @@ public class GenreViewActivity extends AppCompatActivity {
         // Instanciating an array list (you don't need to do this,
         // you already have yours).
         ArrayList<String> your_array_list = new ArrayList<String>();
+
         /*your_array_list.add("foo");
         your_array_list.add("bar");*/
 
@@ -35,7 +38,8 @@ public class GenreViewActivity extends AppCompatActivity {
 
 
         if(getIntent()!=null){
-            your_array_list = getIntent().getStringArrayListExtra("your_list");
+            //your_array_list = getIntent().getStringArrayListExtra("your_list");
+            your_array_list= (ArrayList<String>) readList(this, "generi");
         }
 
 
@@ -66,4 +70,18 @@ public class GenreViewActivity extends AppCompatActivity {
         Intent intent = new Intent( this, CoreActivity.class);
         startActivity(intent);
     }
+
+    public static List<String> readList (Context context, String prefix)
+    {
+        SharedPreferences prefs = context.getSharedPreferences("YourApp", Context.MODE_PRIVATE);
+
+        int size = prefs.getInt(prefix+"_size", 0);
+
+        List<String> data = new ArrayList<String>(size);
+        for(int i=0; i<size; i++)
+            data.add(prefs.getString(prefix+"_"+i, null));
+
+        return data;
+    }
+
 }
