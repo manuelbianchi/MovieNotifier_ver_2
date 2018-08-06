@@ -23,7 +23,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.msnma.movienotifier.GenreViewActivity.readList;
+
 public class AccountActivity extends AppCompatActivity {
+
+    //private ViewHolder finalViewHolder;
+    private List<Item> list;
+    private ViewHolder viewHolder;
+
 
     public class Item {
         boolean checked;
@@ -49,7 +56,8 @@ public class AccountActivity extends AppCompatActivity {
     public class ItemsListAdapter extends BaseAdapter {
 
         private Context context;
-        private List<Item> list;
+        /*messo nella classe
+        private List<Item> list;*/
 
         ItemsListAdapter(Context c, List<Item> l) {
             context = c;
@@ -101,6 +109,20 @@ public class AccountActivity extends AppCompatActivity {
 
             viewHolder.checkBox.setTag(position);
 
+            ArrayList<String> your_array_list = new ArrayList<String>();
+            your_array_list= (ArrayList<String>) GenreViewActivity.readList( context, "generi");
+            final ViewHolder finalViewHolder = viewHolder;
+            if(!your_array_list.isEmpty())
+            {
+                for (int i = 0; i < items.size(); i++) {
+                    if(your_array_list.contains(items.get(i).ItemString))
+                    {
+                        list.get(i).checked = true;
+                        finalViewHolder.checkBox.setChecked(list.get(i).isChecked());
+                    }
+                }
+            }
+
             /*
             viewHolder.checkBox.setOnCheckedChangeListener(
                     new CompoundButton.OnCheckedChangeListener() {
@@ -115,7 +137,8 @@ public class AccountActivity extends AppCompatActivity {
             });
             */
 
-            final ViewHolder finalViewHolder = viewHolder;
+            //final ViewHolder finalViewHolder = viewHolder;
+            //andiamo a prenderci l'array salvato e impostiamolo.
             viewHolder.text.setOnClickListener(new View.OnClickListener()
             {
                 @Override
@@ -247,6 +270,7 @@ public class AccountActivity extends AppCompatActivity {
 
         //funzione chiamata per salvare i dati
         writeList(this, itemsChkStr, "generi");
+
 
         intent.putStringArrayListExtra("your_list",itemsChkStr);
         startActivity(intent);
