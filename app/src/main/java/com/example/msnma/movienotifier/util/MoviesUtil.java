@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 
 import com.example.msnma.movienotifier.R;
 import com.example.msnma.movienotifier.callback.MoviesCallback;
+import com.example.msnma.movienotifier.database.MovieDatabase;
 import com.example.msnma.movienotifier.model.Movie;
 import com.example.msnma.movienotifier.provider.MovieContract;
 import com.goebl.david.Webb;
@@ -73,9 +74,8 @@ public class MoviesUtil {
             public void run() {
                 if (Util.isConnected(activity, false) && !type.equals(TYPE_FAVORITES)) {
                     getMoviesFromApi(activity, type);
-                } else {
-                    getMoviesFromDb(activity, type, callback);
                 }
+                getMoviesFromDb(activity, type, callback);
             }
         });
     }
@@ -88,6 +88,9 @@ public class MoviesUtil {
                     .getBody()
                     .getJSONArray("results");
             List<Movie> movies = toMovies(activity, moviesJson);
+            if(type.equals("POPULAR")){
+                MovieDatabase.saveMoviesOnDB(movies);
+            }
             deleteMovies(activity, type);
             saveMovies(activity, type, movies);
         } catch (JSONException e) {
@@ -255,5 +258,4 @@ public class MoviesUtil {
             return "";
         }
     }
-
 }

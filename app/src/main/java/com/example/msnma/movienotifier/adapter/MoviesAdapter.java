@@ -7,15 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-//import com.bumptech.glide.Glide;
+import com.bumptech.glide.Glide;
 
 import com.example.msnma.movienotifier.R;
 import com.example.msnma.movienotifier.model.Movie;
 
 import java.util.List;
 
-//import butterknife.BindView;
-//import butterknife.ButterKnife;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
 
@@ -36,16 +36,16 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         Movie movie = movies.get(position);
-//        Glide.with(context)
-//                .load(movie.getPosterUrl())
-//                .placeholder(R.drawable.poster_placeholder)
-//                .into(holder.posterView);
+        Glide.with(context)
+                .load(movie.getPosterUrl())
+                .placeholder(R.drawable.poster_placeholder)
+                .into(holder.posterView);
     }
 
     @Override
     public void onViewRecycled(ViewHolder holder) {
         super.onViewRecycled(holder);
-        //       Glide.clear(holder.posterView);
+        Glide.clear(holder.posterView);
     }
 
     @Override
@@ -54,12 +54,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        //       @BindView(R.id.poster)
+        @BindView(R.id.poster)
         public ImageView posterView;
 
         public ViewHolder(View v) {
             super(v);
-            //           ButterKnife.bind(this, v);
+            ButterKnife.bind(this, v);
         }
     }
 }

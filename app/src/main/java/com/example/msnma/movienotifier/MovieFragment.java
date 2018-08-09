@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-//import com.bumptech.glide.Glide;
+import com.bumptech.glide.Glide;
 import com.example.msnma.movienotifier.model.Movie;
 import com.example.msnma.movienotifier.util.MoviesUtil;
 import com.example.msnma.movienotifier.util.Util;
@@ -47,7 +47,7 @@ public class MovieFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movie, container, false);
-//         unbinder = ButterKnife.bind(this, rootView);
+        ButterKnife.bind(this, rootView);
         if (movie != null) {
             init();
         }
@@ -72,12 +72,12 @@ public class MovieFragment extends BaseFragment {
     //       init();
     //   }
 
-    //     @OnClick(R.id.trailer)
+    @OnClick(R.id.trailer)
     public void playTrailer() {
         Util.openLinkInExternalApp(getContext(), movie.getTrailerUrl());
     }
 
-    //     @OnClick(R.id.favorite)
+    @OnClick(R.id.favorite)
     public void toggleFavorite() {
         boolean isFavorite = MoviesUtil.toggleFavorite(getContext(), movie);
         updateFavoriteFab(isFavorite);
@@ -86,9 +86,9 @@ public class MovieFragment extends BaseFragment {
 
     @Override
     protected void init() {
-//        Glide.with(getContext())
-//                .load(movie.getBackdropUrl())
-//                .into(backdropView);
+        Glide.with(getContext())
+                .load(movie.getBackdropUrl())
+                .into(backdropView);
         titleView.setText(movie.getTitle());
         releaseDateView.setText(Util.toPrettyDate(movie.getReleaseDate()));
         ratingView.setText(movie.getRating() + "");

@@ -99,7 +99,9 @@ public class CoreActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager)
     {
-        twoPane = false;
+        if (findViewById(R.id.movie_detail) != null) {
+            twoPane = true;
+        }
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
         adapter.addFragment(MoviesFragment.newInstance(MoviesFragment.Type.POPULAR, twoPane), "Notify");
         MoviesFragment mv = new MoviesFragment();

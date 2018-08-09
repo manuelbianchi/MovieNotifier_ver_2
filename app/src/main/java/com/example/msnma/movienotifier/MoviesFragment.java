@@ -45,9 +45,9 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
     @State
     boolean twoPane;
 
-//    @BindView(R.id.refresh)
+    @BindView(R.id.refresh)
     SwipeRefreshLayout refreshView;
-//    @BindView(R.id.movies)
+    @BindView(R.id.movies)
     RecyclerView moviesView;
 
     public static MoviesFragment newInstance(Type fragType, boolean twoPane) {
@@ -69,15 +69,16 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
         } else {
             fragType = Type.POPULAR;
             twoPane = true;
-        }
+       }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movies_list, container, false);
-//        unbinder = ButterKnife.bind(this, rootView);
-        moviesView = (RecyclerView) rootView.findViewById(R.id.movies);
-        refreshView = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
+        ButterKnife.bind(this, rootView);
+//        refreshView = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
+//        moviesView = (RecyclerView) rootView.findViewById(R.id.movies);
+
         init();
         return rootView;
     }
@@ -100,7 +101,7 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
         updateMovies();
     }
 
-    //     @Override
+    @Override
     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
         showMovieAtPosition(position);
     }
@@ -168,13 +169,13 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
         if (movies != null && position <= movies.size() - 1) {
             Movie movie = movies.get(position);
 //            EventBus.getDefault().postSticky(new ShowMovieEvent(movie));
-//            if (twoPane) {
-//                getFragmentManager().beginTransaction()
-//                        .replace(R.id.movie_detail, new MovieFragment())
-//                        .commit();
-//            } else {
+            if (twoPane) {
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.movie_detail, new MovieFragment())
+                        .commit();
+            } else {
                 startActivity(new Intent(getContext(), MovieActivity.class));
-//            }
+            }
         }
     }
 }

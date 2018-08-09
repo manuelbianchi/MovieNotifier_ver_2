@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity
         {
             Intent intent = new Intent(this, GenreViewActivity.class);
             startActivity(intent);
+//            Intent intent = new Intent(this, .class);
+//            startActivity(intent);
         }
 
 
