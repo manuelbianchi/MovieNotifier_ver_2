@@ -103,10 +103,12 @@ public class CoreActivity extends AppCompatActivity {
             twoPane = true;
         }
         SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
-        adapter.addFragment(MoviesFragment.newInstance(MoviesFragment.Type.POPULAR, twoPane), "Notify");
+        adapter.addFragment(MoviesFragment.newInstance(MoviesFragment.Type.NOTIFY), "Notify");
+        adapter.addFragment(MoviesFragment.newInstance(MoviesFragment.Type.POPULAR), "Suggested");
+        adapter.addFragment(MoviesFragment.newInstance(MoviesFragment.Type.WATCHED), "Watched");
         MoviesFragment mv = new MoviesFragment();
-        adapter.addFragment(mv, "Suggested");
-        adapter.addFragment(mv, "Watched");
+        //adapter.addFragment(mv, "Suggested");
+        //adapter.addFragment(mv, "Watched");
         viewPager.setAdapter(adapter);
     }
 }

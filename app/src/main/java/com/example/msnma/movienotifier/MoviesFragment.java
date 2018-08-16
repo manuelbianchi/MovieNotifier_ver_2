@@ -35,7 +35,10 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
     public enum Type {
         POPULAR,
         TOP_RATED,
-        FAVORITES
+        FAVORITES,
+        SUGGESTED,
+        NOTIFY,
+        WATCHED
     }
 
     @State
@@ -50,11 +53,11 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
     @BindView(R.id.movies)
     RecyclerView moviesView;
 
-    public static MoviesFragment newInstance(Type fragType, boolean twoPane) {
+    public static MoviesFragment newInstance(Type fragType) {
         MoviesFragment fragment = new MoviesFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_FRAG_TYPE, fragType);
-        args.putBoolean(ARG_FRAG_TWO_PANE, twoPane);
+        //args.putBoolean(ARG_FRAG_TWO_PANE, twoPane);
         fragment.setArguments(args);
         return fragment;
     }
