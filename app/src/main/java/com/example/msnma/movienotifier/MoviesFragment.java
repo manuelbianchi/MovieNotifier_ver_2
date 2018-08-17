@@ -123,7 +123,8 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
     protected void init() {
         RecyclerItemClickSupport.addTo(moviesView)
                 .setOnItemClickListener(this);
-        moviesView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        //cambiato da 2 a 1 per non avere la divisione verticale
+        moviesView.setLayoutManager(new GridLayoutManager(getContext(), 1));
         moviesView.setHasFixedSize(true);
         refreshView.setOnRefreshListener(this);
         updateMovies();

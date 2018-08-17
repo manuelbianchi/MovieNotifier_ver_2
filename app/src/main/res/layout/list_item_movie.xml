@@ -1,7 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="350px">
+    <!--android:layout_height="?android:attr/listPreferredItemHeight">-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/card_background">
+
+        <ImageView
+            android:id="@+id/poster"
+            android:layout_width="185px"
+            android:layout_height="277px"
+            android:src="@drawable/poster_placeholder"
+            android:scaleType="centerCrop"
+            android:contentDescription="TODO" />
+       <LinearLayout
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+           android:gravity="center_vertical">
+         <TextView
+            android:id="@+id/movie_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+             android:textStyle="bold"
+            android:layout_gravity="left|center_vertical"
+            android:textSize="20dip"
+            android:layout_marginLeft="10dip"
+            />
+         <TextView
+            android:id="@+id/movie_release_date"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="left|center_vertical"
+            android:textSize="20dip"
+            android:layout_marginLeft="10dip"
+             />
+        </LinearLayout>
+
+
+    </LinearLayout>
+</FrameLayout>
+<!--<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/poster"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:scaleType="centerCrop"
-    android:src="@drawable/poster_placeholder" />
+    android:src="@drawable/poster_placeholder" />-->
