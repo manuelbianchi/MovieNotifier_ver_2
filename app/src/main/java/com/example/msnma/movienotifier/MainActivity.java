@@ -11,18 +11,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.msnma.movienotifier.database.MovieDatabase;
+
 public class MainActivity extends AppCompatActivity
 {
-
+    public static MainActivity mainActivity;
+    public static MovieDatabase db;
     //private ViewPager viewPager;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //nuovo codice per far partire una activity diversa
-
+        db = new MovieDatabase(this);
+        mainActivity = this;
         //se la lista è vuota parte la main activity
         if(GenreViewActivity.readList(this, "generi").isEmpty()) {
             setContentView(R.layout.activity_main);
@@ -40,15 +42,15 @@ public class MainActivity extends AppCompatActivity
 
 
     }
-     /** Called when the user taps the Send button */
-        public void pressAddButton(View view)
-        {
-            Intent intent = new Intent(this, SecondActivity.class);
-            //EditText editText = (EditText) findViewById(R.id.editText);
-            //String message = editText.getText().toString();
-            //intent.putExtra(EXTRA_MESSAGE, message);
-            startActivity(intent);
-        }
+    /** Called when the user taps the Send button */
+    public void pressAddButton(View view)
+    {
+        Intent intent = new Intent(this, SecondActivity.class);
+        //EditText editText = (EditText) findViewById(R.id.editText);
+        //String message = editText.getText().toString();
+        //intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
+    }
 
 
     /** Called when the user taps the Send button */
@@ -106,5 +108,11 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    public static MainActivity getInstance(){
+        return mainActivity;
+    }
 
+    public static MovieDatabase getMovieDatabase(){
+        return db;
+    }
 }

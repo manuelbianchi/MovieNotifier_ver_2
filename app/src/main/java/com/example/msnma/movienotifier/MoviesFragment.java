@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.msnma.movienotifier.adapter.MoviesAdapter;
@@ -19,6 +20,7 @@ import com.rohit.recycleritemclicksupport.RecyclerItemClickSupport;
 //import org.greenrobot.eventbus.EventBus;
 //import org.greenrobot.eventbus.Subscribe;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,11 +35,8 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
     private static final String ARG_FRAG_TWO_PANE = "twoPane";
 
     public enum Type {
-        POPULAR,
-        TOP_RATED,
-        FAVORITES,
-        SUGGESTED,
         NOTIFY,
+        SUGGESTED,
         WATCHED
     }
 
@@ -53,11 +52,12 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
     @BindView(R.id.movies)
     RecyclerView moviesView;
 
+    View rootView;
+
     public static MoviesFragment newInstance(Type fragType) {
         MoviesFragment fragment = new MoviesFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_FRAG_TYPE, fragType);
-        //args.putBoolean(ARG_FRAG_TWO_PANE, twoPane);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,23 +65,20 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //       Icepick.restoreInstanceState(this, savedInstanceState);
+//        Icepick.restoreInstanceState(this, savedInstanceState);
         if (getArguments() != null) {
             fragType = (Type) getArguments().getSerializable(ARG_FRAG_TYPE);
             twoPane = getArguments().getBoolean(ARG_FRAG_TWO_PANE);
         } else {
-            fragType = Type.POPULAR;
+            fragType = Type.SUGGESTED;
             twoPane = true;
-       }
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_movies_list, container, false);
+        rootView = inflater.inflate(R.layout.fragment_movies_list, container, false);
         ButterKnife.bind(this, rootView);
-//        refreshView = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
-//        moviesView = (RecyclerView) rootView.findViewById(R.id.movies);
-
         init();
         return rootView;
     }
@@ -132,7 +129,7 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
         updateMovies();
     }
 
-    private void updateMovies() {
+    private void updateMovies(){
         if (movies == null) {
             MoviesCallback callback = new MoviesCallback() {
                 @Override
@@ -152,14 +149,14 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
                 }
             };
             switch (fragType) {
-                case POPULAR:
-                    MoviesUtil.getPopularMovies(getActivity(), callback);
+                case NOTIFY:
+                    MoviesUtil.getNotifyMeMovies(getActivity(), callback);
                     break;
-                case TOP_RATED:
-                    MoviesUtil.getTopRatedMovies(getActivity(), callback);
+                case SUGGESTED:
+                    MoviesUtil.getSuggestedMovies(getActivity(), callback);
                     break;
-                case FAVORITES:
-                    MoviesUtil.getFavoritesMovies(getActivity(), callback);
+                case WATCHED:
+                    MoviesUtil.getWatchedMovies(getActivity(), callback);
                     break;
             }
         } else if (moviesView != null) {

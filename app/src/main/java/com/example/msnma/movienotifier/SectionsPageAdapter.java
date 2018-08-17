@@ -9,13 +9,6 @@ import java.util.List;
 
 public class SectionsPageAdapter extends FragmentPagerAdapter
 {
-    private final List<MoviesFragment> mFragmentList = new ArrayList<>();
-    private final List<String> mFragmentTitleList = new ArrayList<>();
-
-    public void addFragment(MoviesFragment fragment, String title) {
-        mFragmentList.add(fragment);
-        mFragmentTitleList.add(title);
-    }
 
     public SectionsPageAdapter(FragmentManager fm) {
         super(fm);
@@ -23,16 +16,34 @@ public class SectionsPageAdapter extends FragmentPagerAdapter
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return mFragmentTitleList.get(position);
+        switch (position) {
+            case 0:
+                return "Notify";        //todo this should referred to a string in the string.xml file
+            case 1:
+                return "Suggested";
+            case 2:
+                return "Watched";
+            default:
+                return null;
+        }
     }
 
     @Override
     public Fragment getItem(int position) {
-        return mFragmentList.get(position);
+        switch (position) {
+            case 0:
+                return MoviesFragment.newInstance(MoviesFragment.Type.NOTIFY);
+            case 1:
+                return MoviesFragment.newInstance(MoviesFragment.Type.SUGGESTED);
+            case 2:
+                return MoviesFragment.newInstance(MoviesFragment.Type.WATCHED);
+            default:
+                return null;
+        }
     }
 
     @Override
     public int getCount() {
-        return mFragmentList.size();
+        return 3;
     }
 }

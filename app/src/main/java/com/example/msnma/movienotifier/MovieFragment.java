@@ -92,7 +92,7 @@ public class MovieFragment extends BaseFragment {
         titleView.setText(movie.getTitle());
         releaseDateView.setText(Util.toPrettyDate(movie.getReleaseDate()));
         ratingView.setText(movie.getRating() + "");
-        updateFavoriteFab(MoviesUtil.isFavorite(getContext(), movie));
+        updateFavoriteFab(MoviesUtil.isWatched(getContext(), movie));
     }
 
     private void updateFavoriteFab(boolean isFavorite) {

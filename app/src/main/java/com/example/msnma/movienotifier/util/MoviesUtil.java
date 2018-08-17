@@ -5,10 +5,16 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.view.View;
+import android.widget.TextView;
 
+import com.example.msnma.movienotifier.MainActivity;
+import com.example.msnma.movienotifier.MovieFragment;
+import com.example.msnma.movienotifier.MoviesFragment;
 import com.example.msnma.movienotifier.R;
 import com.example.msnma.movienotifier.callback.MoviesCallback;
 import com.example.msnma.movienotifier.database.MovieDatabase;
+import com.example.msnma.movienotifier.mapper.MovieMapper;
 import com.example.msnma.movienotifier.model.Movie;
 import com.example.msnma.movienotifier.provider.MovieContract;
 import com.goebl.david.Webb;
@@ -29,16 +35,21 @@ public class MoviesUtil {
     private static final String TMDB_POSTER_URL = "https://image.tmdb.org/t/p/w185%s";
     private static final String TMDB_BACKDROP_URL = "https://image.tmdb.org/t/p/w300%s";
 
-    private static final String TYPE_POPULAR = "popular";
-    private static final String TYPE_TOP_RATED = "top_rated";
-    private static final String TYPE_FAVORITES = "favorites";
+    private static final String TMDB_UPCOMING_MOVIES ="http://api.themoviedb.org/3/movie/upcoming?api_key=f329e1bdcc6da3f6ed39da7278144be6";
+    private static final String TMDB_IN_THEATRES = "http://api.themoviedb.org/3/movie/now_playing?api_key=f329e1bdcc6da3f6ed39da7278144be6";
 
-    public static boolean isFavorite(Context context, Movie movie) {
+    private static final String TYPE_NOTIFY = "NOTIFY";
+    private static final String TYPE_WATCHED = "WATCHED";
+    private static final String TYPE_POPULAR = "popular";
+
+    private static final MovieMapper mapper = new MovieMapper();
+
+    public static boolean isWatched(Context context, Movie movie) {
         Cursor cursor = context.getContentResolver()
                 .query(MovieContract.CONTENT_URI,
                         null,
                         String.format("%s = ? and %s = ?", MovieContract.MOVIE_ID, MovieContract.TYPE),
-                        new String[]{movie.getId() + "", TYPE_FAVORITES},
+                        new String[]{movie.getId() + "", TYPE_WATCHED},
                         null
                 );
         boolean isFavorite = cursor.getCount() > 0;
@@ -47,35 +58,51 @@ public class MoviesUtil {
     }
 
     public static boolean toggleFavorite(Context context, Movie movie) {
-        if (isFavorite(context, movie)) {
-            deleteMovie(context, TYPE_FAVORITES, movie);
+        if (isWatched(context, movie)) {
+            deleteMovie(context, TYPE_WATCHED, movie);
             return false;
         } else {
-            saveMovie(context, TYPE_FAVORITES, movie);
+            saveMovie(context, TYPE_WATCHED, movie);
             return true;
         }
     }
 
-    public static void getPopularMovies(Activity activity, MoviesCallback callback) {
+    public static void getNotifyMeMovies(Activity activity, MoviesCallback callback) {
+        getMovies(activity, TYPE_NOTIFY, callback);
+    }
+
+    public static void getSuggestedMovies(Activity activity, MoviesCallback callback) {
         getMovies(activity, TYPE_POPULAR, callback);
     }
 
-    public static void getTopRatedMovies(Activity activity, MoviesCallback callback) {
-        getMovies(activity, TYPE_TOP_RATED, callback);
-    }
-
-    public static void getFavoritesMovies(Activity activity, MoviesCallback callback) {
-        getMovies(activity, TYPE_FAVORITES, callback);
+    public static void getWatchedMovies(Activity activity, MoviesCallback callback) {
+        getMovies(activity, TYPE_WATCHED, callback);
     }
 
     private static void getMovies(final Activity activity, final String type, final MoviesCallback callback) {
+
         AsyncTask.execute(new Runnable() {
+
             @Override
             public void run() {
-                if (Util.isConnected(activity, false) && !type.equals(TYPE_FAVORITES)) {
-                    getMoviesFromApi(activity, type);
+                if (type.equals(TYPE_NOTIFY)) {
+                    try {
+                        mapper.toMovieList(MainActivity.getMovieDatabase().getAllMovieByType(TYPE_NOTIFY));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                } else if (type.equals(TYPE_WATCHED)) {
+                    try {
+                        mapper.toMovieList(MainActivity.getMovieDatabase().getAllMovieByType(TYPE_WATCHED));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    if (Util.isConnected(activity, false)) {
+                        getMoviesFromApi(activity, TYPE_POPULAR);
+                    }
+                    getMoviesFromDb(activity, type, callback);
                 }
-                getMoviesFromDb(activity, type, callback);
             }
         });
     }
@@ -88,9 +115,9 @@ public class MoviesUtil {
                     .getBody()
                     .getJSONArray("results");
             List<Movie> movies = toMovies(activity, moviesJson);
-            if(type.equals("POPULAR")){
-                MovieDatabase.saveMoviesOnDB(movies);
-            }
+//            if(type.equals("suggested")){
+//                MovieDatabase.saveMoviesOnDB(movies);
+//            }
             deleteMovies(activity, type);
             saveMovies(activity, type, movies);
         } catch (JSONException e) {
