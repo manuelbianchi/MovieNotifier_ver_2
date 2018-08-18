@@ -54,7 +54,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorAccent"
+                android:background="@color/colorPrimary"
                 android:padding="10dp">
 
                 <TextView
@@ -105,6 +105,43 @@
 
             </LinearLayout>
             <!--todo we can add here the buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/cancelMovie"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cancel"
+                    android:textColor="@android:color/holo_blue_bright"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/editNotify"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="pressEditNotifyButton"
+                    android:text="Edit"
+                    android:textColor="@android:color/holo_blue_bright"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/iWatchItMovie"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="I watch it"
+                    android:textColor="@android:color/holo_blue_bright"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
