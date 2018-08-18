@@ -48,7 +48,6 @@ public class CoreActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         EventBus.getDefault().postSticky(new TwoPaneEvent(twoPane));
-
     }
 
     public boolean onCreateOptionsMenu(Menu menu)

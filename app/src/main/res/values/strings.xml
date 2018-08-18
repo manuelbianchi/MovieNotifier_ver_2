@@ -90,4 +90,5 @@
     <string name="boat_2">boat2</string>
 
     <string name="defaultEmpty">List Empty, show a message</string>
+    <!--todo add here the string for the tab names -->
 </resources>

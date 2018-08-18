@@ -48,7 +48,7 @@ public class MovieFragment extends BaseFragment {
     @BindView(R.id.overview)
     TextView overviewView;
 //    @BindView(R.id.favorite)
-//    FloatingActionButton favoriteView;
+//    FloatingActionButton favoriteView;        todo change this in the way that will handle the add to watched list
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
