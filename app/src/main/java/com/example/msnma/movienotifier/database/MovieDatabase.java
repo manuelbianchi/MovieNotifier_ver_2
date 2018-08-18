@@ -3,19 +3,25 @@ package com.example.msnma.movienotifier.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.msnma.movienotifier.MainActivity;
 import com.example.msnma.movienotifier.databaseModel.MovieDBModel;
 import com.example.msnma.movienotifier.databaseModel.TypeDBModel;
+import com.example.msnma.movienotifier.mapper.MovieMapper;
 import com.example.msnma.movienotifier.model.Movie;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MovieDatabase extends SQLiteOpenHelper {
 
@@ -73,7 +79,8 @@ public class MovieDatabase extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_MOVIE);
         db.execSQL(CREATE_TABLE_TYPE);
         db.execSQL(CREATE_TABLE_MOVIE_TYPE);
-        insertType(); //NOTA: questo va chiamato solo la prima volta che instanziamo il DB, AGGIUNGERE CONTROLLO!
+        insertType(db); //NOTA: questo va chiamato solo la prima volta che instanziamo il DB, AGGIUNGERE CONTROLLO!
+        //in teoria onCreate verrà chiamato solo la prima volta...
     }
 
     @Override
@@ -86,9 +93,30 @@ public class MovieDatabase extends SQLiteOpenHelper {
         // create new tables
         onCreate(db);
     }
-
-    public static void saveMoviesOnDB(List<Movie> movies){
-
+    //questa funzione serve solo per inserire casualmente dai suggested movies, alcuni notify e watched movies
+    public static void saveMoviesOnDB(List<Movie> movies, String type){
+        MovieDatabase db = MainActivity.getMovieDatabase();
+        MovieMapper mapper = new MovieMapper();
+        List<MovieDBModel> moviesDB = mapper.toMovieDBModelList(movies);
+        Integer typeId = 0;
+        int index = 0;
+        if(type.equals("notify")){
+            typeId = 1;
+        }else if(type.equals("watched")){
+            typeId = 2;
+            index = index+5;
+        }else{
+            //todo catch invalid type Id exception
+        }
+        for(int a = index; a<index+5; a++){
+            insertMovie(moviesDB.get(a), typeId, db);
+        }
+    }
+    //open the database, maybe not useful...
+    public MovieDatabase open() throws SQLException
+    {
+        database = getWritableDatabase();
+        return this;
     }
 
     // closing database
@@ -99,37 +127,36 @@ public class MovieDatabase extends SQLiteOpenHelper {
     }
 
     //CRUDs
-    public void insertMovie(MovieDBModel movie, Integer typeId) {
-        SQLiteDatabase db = this.getWritableDatabase();
+    public static void insertMovie(MovieDBModel movie, Integer typeId, MovieDatabase db) {
+        SQLiteDatabase database = db.getWritableDatabase();
+        if(checkMovieUniqueness(movie.getTitle(), db)) {        //NON VOGLIO INSERIRE PIù VOLTE LO STESSO FILM
+            ContentValues values = new ContentValues();
+            values.put(TITLE, movie.getTitle());
+            values.put(OVERVIEW, movie.getOverview());
+            values.put(POSTER_URL, movie.getPosterUrl());
+            values.put(BACKDROP_URL, movie.getBackdropUrl());
+            values.put(TRAILER_URL, movie.getTrailerUrl());
+            values.put(RELEASE_DATE, movie.getReleaseDate().toString());
+            values.put(RATING, movie.getRating());
+            values.put(ADULT, movie.isAdult());
 
-        ContentValues values = new ContentValues();
-        values.put(TITLE, movie.getTitle());
-        values.put(OVERVIEW, movie.getOverview());
-        values.put(POSTER_URL, movie.getPosterUrl());
-        values.put(BACKDROP_URL, movie.getBackdropUrl());
-        values.put(TRAILER_URL, movie.getTrailerUrl());
-        values.put(RELEASE_DATE, movie.getReleaseDate().toString());
-        values.put(RATING, movie.getRating());
-        values.put(ADULT, movie.isAdult());
-
-        // insert row
-        long movieId = db.insert(TABLE_MOVIE, null, values);
-        insertMovieType(movieId, typeId);
-
+            // insert row
+            long movieId = database.insert(TABLE_MOVIE, null, values);
+            insertMovieType(movieId, typeId, db);
+        }
     }
 
-    public void insertMovieType(Long movieId, Integer typeId){
-        SQLiteDatabase db = this.getWritableDatabase();
+    public static void insertMovieType(Long movieId, Integer typeId, MovieDatabase db){
+        SQLiteDatabase database = db.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(M_ID, movieId.intValue());
         values.put(T_ID, typeId);
 
-        db.insert(TABLE_MOVIE_TYPE, null, values);
+        database.insert(TABLE_MOVIE_TYPE, null, values);
     }
 
-    private void insertType(){
-        SQLiteDatabase db = this.getWritableDatabase();
+    private void insertType(SQLiteDatabase db){
 
         ContentValues descr1 = new ContentValues();
         descr1.put(TYPE_DESCR, "NOTIFY");
@@ -142,7 +169,7 @@ public class MovieDatabase extends SQLiteOpenHelper {
         db.insert(TABLE_TYPE, null, descr2);
     }
 
-    public TypeDBModel getTypeByTypeDescr(String typeDescr) {
+    private TypeDBModel getTypeByTypeDescr(String typeDescr) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String selectQuery = "SELECT  * FROM " + TABLE_TYPE + " WHERE "
@@ -162,6 +189,25 @@ public class MovieDatabase extends SQLiteOpenHelper {
         return td;
     }
 
+    private static boolean checkMovieUniqueness(String movieTitle, MovieDatabase db) {
+        SQLiteDatabase database = db.getReadableDatabase();
+
+        String selectQuery = "SELECT  * FROM " + TABLE_MOVIE + " WHERE "
+                + TITLE + " = " + "'"+ movieTitle + "'";
+
+        Log.e(LOG, selectQuery);
+
+        Cursor c = database.rawQuery(selectQuery, null);
+
+        if(c.moveToFirst()){
+            c.close();
+            return false;
+        }else{
+            c.close();
+            return true;
+        }
+    }
+
     public List<MovieDBModel> getAllMovieByType(String typeDescr) throws ParseException {
         List<MovieDBModel> movies = new ArrayList<MovieDBModel>();
 
@@ -175,7 +221,7 @@ public class MovieDatabase extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(selectQuery, null);
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf3 = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
         // looping through all rows and adding to list
         if (c.moveToFirst()) {
             do {
@@ -187,7 +233,7 @@ public class MovieDatabase extends SQLiteOpenHelper {
                 td.setBackdropUrl((c.getString(c.getColumnIndex(BACKDROP_URL))));
                 td.setTrailerUrl(c.getString(c.getColumnIndex(TRAILER_URL)));
                 String dateString =c.getString((c.getColumnIndex(RELEASE_DATE)));
-                Date date = format.parse(dateString);
+                Date date = sdf3.parse(dateString);
                 td.setReleaseDate(date);
                 td.setRating((c.getFloat(c.getColumnIndex(RATING))));
                 int adult = c.getInt(c.getColumnIndex(ADULT));

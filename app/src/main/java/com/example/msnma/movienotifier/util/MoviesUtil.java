@@ -40,7 +40,7 @@ public class MoviesUtil {
 
     private static final String TYPE_NOTIFY = "NOTIFY";
     private static final String TYPE_WATCHED = "WATCHED";
-    private static final String TYPE_POPULAR = "popular";
+    private static final String TYPE_SUGGESTED = "popular";
 
     private static final MovieMapper mapper = new MovieMapper();
 
@@ -72,7 +72,7 @@ public class MoviesUtil {
     }
 
     public static void getSuggestedMovies(Activity activity, MoviesCallback callback) {
-        getMovies(activity, TYPE_POPULAR, callback);
+        getMovies(activity, TYPE_SUGGESTED, callback);
     }
 
     public static void getWatchedMovies(Activity activity, MoviesCallback callback) {
@@ -85,21 +85,22 @@ public class MoviesUtil {
 
             @Override
             public void run() {
-                if (type.equals(TYPE_NOTIFY)) {
+                if (type.equals(TYPE_NOTIFY) || type.equals(TYPE_WATCHED)) {
+                    getMoviesFromDb(activity, type, callback);
                     try {
-                        mapper.toMovieList(MainActivity.getMovieDatabase().getAllMovieByType(TYPE_NOTIFY));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                } else if (type.equals(TYPE_WATCHED)) {
-                    try {
-                        mapper.toMovieList(MainActivity.getMovieDatabase().getAllMovieByType(TYPE_WATCHED));
+                        final List<Movie> movies = mapper.toMovieList(MainActivity.getMovieDatabase().getAllMovieByType(type));
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.success(movies);
+                            }
+                        });
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
                 } else {
                     if (Util.isConnected(activity, false)) {
-                        getMoviesFromApi(activity, TYPE_POPULAR);
+                        getMoviesFromApi(activity, TYPE_SUGGESTED);
                     }
                     getMoviesFromDb(activity, type, callback);
                 }
@@ -108,18 +109,17 @@ public class MoviesUtil {
     }
 
     private static void getMoviesFromApi(Activity activity, String type) {
-        String apiUrl = String.format(TMDB_API_MOVIES_URL, type, activity.getString(R.string.tmdb_api_key), 1);
+        String apiUrl = String.format(TMDB_API_MOVIES_URL, "popular", activity.getString(R.string.tmdb_api_key), 1);
         try {
-            JSONArray moviesJson = WEBB.get(apiUrl)
+            JSONArray moviesJson = WEBB.get(TMDB_UPCOMING_MOVIES)
                     .asJsonObject()
                     .getBody()
                     .getJSONArray("results");
             List<Movie> movies = toMovies(activity, moviesJson);
-//            if(type.equals("suggested")){
-//                MovieDatabase.saveMoviesOnDB(movies);
-//            }
             deleteMovies(activity, type);
             saveMovies(activity, type, movies);
+//            MovieDatabase.saveMoviesOnDB(movies, "notify");
+//            MovieDatabase.saveMoviesOnDB(movies, "watched");
         } catch (JSONException e) {
             e.printStackTrace();
         }

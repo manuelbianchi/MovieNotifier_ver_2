@@ -13,11 +13,12 @@ import android.widget.Toast;
 
 import com.example.msnma.movienotifier.adapter.MoviesAdapter;
 import com.example.msnma.movienotifier.callback.MoviesCallback;
+import com.example.msnma.movienotifier.event.ShowMovieEvent;
 import com.example.msnma.movienotifier.model.Movie;
 import com.example.msnma.movienotifier.util.MoviesUtil;
 import com.rohit.recycleritemclicksupport.RecyclerItemClickSupport;
 
-//import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.EventBus;
 //import org.greenrobot.eventbus.Subscribe;
 
 import java.text.ParseException;
@@ -54,10 +55,11 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
 
     View rootView;
 
-    public static MoviesFragment newInstance(Type fragType) {
+    public static MoviesFragment newInstance(Type fragType, boolean twoPane) {
         MoviesFragment fragment = new MoviesFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_FRAG_TYPE, fragType);
+        args.putBoolean(ARG_FRAG_TWO_PANE, twoPane);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,7 +67,7 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        Icepick.restoreInstanceState(this, savedInstanceState);
+        Icepick.restoreInstanceState(this, savedInstanceState);
         if (getArguments() != null) {
             fragType = (Type) getArguments().getSerializable(ARG_FRAG_TYPE);
             twoPane = getArguments().getBoolean(ARG_FRAG_TWO_PANE);

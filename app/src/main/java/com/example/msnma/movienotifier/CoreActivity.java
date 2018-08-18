@@ -22,6 +22,8 @@ public class CoreActivity extends AppCompatActivity {
     @BindView(R.id.tabs)
     TabLayout tabLayout;
 
+    boolean twoPane;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -30,7 +32,10 @@ public class CoreActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
 
-        mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
+        if (findViewById(R.id.movie_detail) != null) {
+            twoPane = true;
+        }
+        mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager(), twoPane);
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
