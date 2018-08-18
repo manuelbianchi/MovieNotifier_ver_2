@@ -9,9 +9,11 @@ import java.util.List;
 
 public class SectionsPageAdapter extends FragmentPagerAdapter
 {
+    boolean twoPane;
 
-    public SectionsPageAdapter(FragmentManager fm) {
+    public SectionsPageAdapter(FragmentManager fm, boolean twoPane) {
         super(fm);
+        this.twoPane = twoPane;
     }
 
     @Override
@@ -32,11 +34,11 @@ public class SectionsPageAdapter extends FragmentPagerAdapter
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return MoviesFragment.newInstance(MoviesFragment.Type.NOTIFY);
+                return MoviesFragment.newInstance(MoviesFragment.Type.NOTIFY, twoPane);
             case 1:
-                return MoviesFragment.newInstance(MoviesFragment.Type.SUGGESTED);
+                return MoviesFragment.newInstance(MoviesFragment.Type.SUGGESTED, twoPane);
             case 2:
-                return MoviesFragment.newInstance(MoviesFragment.Type.WATCHED);
+                return MoviesFragment.newInstance(MoviesFragment.Type.WATCHED, twoPane);
             default:
                 return null;
         }
