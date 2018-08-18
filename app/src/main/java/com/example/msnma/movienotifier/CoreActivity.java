@@ -11,6 +11,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.msnma.movienotifier.event.TwoPaneEvent;
+
+import org.greenrobot.eventbus.EventBus;
+
 import butterknife.BindView;
 
 public class CoreActivity extends AppCompatActivity {
@@ -43,6 +47,7 @@ public class CoreActivity extends AppCompatActivity {
         mViewPager.setAdapter(mSectionsPageAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        EventBus.getDefault().postSticky(new TwoPaneEvent(twoPane));
 
     }
 

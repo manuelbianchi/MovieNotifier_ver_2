@@ -14,11 +14,13 @@ import android.widget.Toast;
 import com.example.msnma.movienotifier.adapter.MoviesAdapter;
 import com.example.msnma.movienotifier.callback.MoviesCallback;
 import com.example.msnma.movienotifier.event.ShowMovieEvent;
+import com.example.msnma.movienotifier.event.TwoPaneEvent;
 import com.example.msnma.movienotifier.model.Movie;
 import com.example.msnma.movienotifier.util.MoviesUtil;
 import com.rohit.recycleritemclicksupport.RecyclerItemClickSupport;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 //import org.greenrobot.eventbus.Subscribe;
 
 import java.text.ParseException;
@@ -88,12 +90,12 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
     @Override
     public void onStart() {
         super.onStart();
-//         EventBus.getDefault().register(this);
+         EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStop() {
-//         EventBus.getDefault().unregister(this);
+         EventBus.getDefault().unregister(this);
         super.onStop();
     }
 
@@ -116,16 +118,15 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
     //       }
     //    }
 
-    //   @Subscribe(sticky = true)
-    //   public void onEvent(TwoPaneEvent event) {
-    //       twoPane = event.twoPane;
-    //   }
+    @Subscribe(sticky = true)
+    public void onEvent(TwoPaneEvent event) {
+       twoPane = event.twoPane;
+    }
 
     @Override
     protected void init() {
         RecyclerItemClickSupport.addTo(moviesView)
                 .setOnItemClickListener(this);
-        //cambiato da 2 a 1 per non avere la divisione verticale
         moviesView.setLayoutManager(new GridLayoutManager(getContext(), 1));
         moviesView.setHasFixedSize(true);
         refreshView.setOnRefreshListener(this);
@@ -171,7 +172,7 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
     private void showMovieAtPosition(int position) {
         if (movies != null && position <= movies.size() - 1) {
             Movie movie = movies.get(position);
-//            EventBus.getDefault().postSticky(new ShowMovieEvent(movie));
+            EventBus.getDefault().postSticky(new ShowMovieEvent(movie));
             if (twoPane) {
                 getFragmentManager().beginTransaction()
                         .replace(R.id.movie_detail, new MovieFragment())

@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.msnma.movienotifier.event.ShowMovieEvent;
 import com.example.msnma.movienotifier.model.Movie;
 import com.example.msnma.movienotifier.util.MoviesUtil;
 import com.example.msnma.movienotifier.util.Util;
@@ -20,6 +21,9 @@ import com.mikepenz.iconics.IconicsDrawable;
 
 //import org.greenrobot.eventbus.EventBus;
 //import org.greenrobot.eventbus.Subscribe;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
@@ -41,8 +45,10 @@ public class MovieFragment extends BaseFragment {
     TextView releaseDateView;
     @BindView(R.id.rating)
     TextView ratingView;
-    @BindView(R.id.favorite)
-    FloatingActionButton favoriteView;
+    @BindView(R.id.overview)
+    TextView overviewView;
+//    @BindView(R.id.favorite)
+//    FloatingActionButton favoriteView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,32 +63,32 @@ public class MovieFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-//         EventBus.getDefault().register(this);
+         EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStop() {
-//        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(this);
         super.onStop();
     }
 
-    //     @Subscribe(sticky = true)
-    //    public void onEvent(ShowMovieEvent event) {
-    //       movie = event.movie;
-    //       init();
-    //   }
+    @Subscribe(sticky = true)
+    public void onEvent(ShowMovieEvent event) {
+       movie = event.movie;
+       init();
+    }
 
     @OnClick(R.id.trailer)
     public void playTrailer() {
         Util.openLinkInExternalApp(getContext(), movie.getTrailerUrl());
     }
 
-    @OnClick(R.id.favorite)
-    public void toggleFavorite() {
-        boolean isFavorite = MoviesUtil.toggleFavorite(getContext(), movie);
-        updateFavoriteFab(isFavorite);
+//    @OnClick(R.id.watched)
+//    public void toggleFavorite() {
+//        boolean isFavorite = MoviesUtil.toggleFavorite(getContext(), movie);
+//        updateFavoriteFab(isFavorite);
 //         EventBus.getDefault().postSticky(new UpdateFavoritesEvent());
-    }
+//    }
 
     @Override
     protected void init() {
@@ -92,17 +98,18 @@ public class MovieFragment extends BaseFragment {
         titleView.setText(movie.getTitle());
         releaseDateView.setText(Util.toPrettyDate(movie.getReleaseDate()));
         ratingView.setText(movie.getRating() + "");
-        updateFavoriteFab(MoviesUtil.isWatched(getContext(), movie));
+        overviewView.setText(movie.getOverview());
+//        updateFavoriteFab(MoviesUtil.isWatched(getContext(), movie));
     }
 
-    private void updateFavoriteFab(boolean isFavorite) {
-        GoogleMaterial.Icon favoriteIcon = isFavorite ?
-                GoogleMaterial.Icon.gmd_favorite : GoogleMaterial.Icon.gmd_favorite_border;
-        favoriteView.setImageDrawable(new IconicsDrawable(getContext())
-                .icon(favoriteIcon)
-                .color(Color.WHITE)
-                .sizeDp(48));
-    }
+//    private void updateFavoriteFab(boolean isFavorite) {
+//        GoogleMaterial.Icon favoriteIcon = isFavorite ?
+//                GoogleMaterial.Icon.gmd_favorite : GoogleMaterial.Icon.gmd_favorite_border;
+//        favoriteView.setImageDrawable(new IconicsDrawable(getContext())
+//                .icon(favoriteIcon)
+//                .color(Color.WHITE)
+//                .sizeDp(48));
+//    }
 
     public void shareMovie() {
         String text = String.format("%s\n%s", movie.getTitle(), movie.getTrailerUrl());
