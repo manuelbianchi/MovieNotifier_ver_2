@@ -1,29 +1,49 @@
 package com.example.msnma.movienotifier.adapter;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import com.example.msnma.movienotifier.MoviesFragment;
 import com.example.msnma.movienotifier.R;
 import com.example.msnma.movienotifier.model.Movie;
 
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.app.PendingIntent.getActivity;
+import static com.example.msnma.movienotifier.MoviesFragment.*;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
 
     private Context context;
     private List<Movie> movies;
     private View itemView;
+
+    //per la data
+    private EditText fromDateEtxt;
+    //private Context context;
 
     public MoviesAdapter(Context context, List<Movie> movies) {
         this.context = context;
@@ -37,7 +57,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         Movie movie = movies.get(position);
         Glide.with(context)
                 .load(movie.getPosterUrl())
@@ -49,7 +69,131 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         String date = yourString.substring(0, 10);
         String year = yourString.substring(yourString.length()-5,yourString.length());
         holder.release_date.setText(date+year);
+        holder.notifyButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view) {
+                /*String testo = movies.get(position).getTitle().toString();
+               Toast tostato = Toast.makeText(context,testo,Toast.LENGTH_SHORT);
+                tostato.show();*/
+                alertFormElements();
+            }
+        });
 
+
+
+
+    }
+
+
+    //nuovo codice riguardo l'alerDialog
+
+    public final void alertFormElements()
+    {
+
+        /*
+         * Inflate the XML view. activity_main is in
+         * res/layout/form_elements.xml
+         */
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View formElementsView = inflater.inflate(R.layout.form_elements,
+                null, false);
+
+        // You have to list down your form elements
+        /*final CheckBox myCheckBox = (CheckBox) formElementsView
+                .findViewById(R.id.myCheckBox);*/
+
+        final RadioGroup genderRadioGroup = (RadioGroup) formElementsView
+                .findViewById(R.id.NotifyAlertRadioGroup);
+
+        //questo sarà sostituito con un calendario.
+        /*final EditText nameEditText = (EditText) formElementsView
+                .findViewById(R.id.nameEditText);*/
+
+        //parte data
+        fromDateEtxt = (EditText) formElementsView.findViewById(R.id.nameEditText);
+        fromDateEtxt.setInputType(InputType.TYPE_NULL);
+        fromDateEtxt.requestFocus();
+
+
+        //metodo data
+        //setDateTimeField();
+        //fromDatePickerDialog.show();
+
+        fromDateEtxt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Calendar c = Calendar.getInstance();
+                DatePickerDialog dpd = new DatePickerDialog( context ,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                fromDateEtxt.setText(dayOfMonth + "-"
+                                        + (monthOfYear + 1) + "-" + year);
+
+                            }
+                        },
+                        c.get(Calendar.YEAR),
+                        c.get(Calendar.MONTH),
+                        c.get(Calendar.DAY_OF_MONTH));
+                dpd.show();
+            }
+        });
+
+
+
+
+        // the alert dialog
+        new AlertDialog.Builder(context).setView(formElementsView)
+                .setTitle("Form Elements")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @TargetApi(11)
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        //fromDateEtxt.setText(dateFormatter.format(newDate.getTime()));
+
+                        String toastString = "";
+
+                        /*
+                         * Detecting whether the checkbox is checked or not.
+                         */
+                        /*if (myCheckBox.isChecked()) {
+                            toastString += "Happy is checked!\n";
+                        } else {
+                            toastString += "Happy IS NOT checked.\n";
+                        }*/
+
+                        /*
+                         * Getting the value of selected RadioButton.
+                         */
+                        // get selected radio button from radioGroup
+                        int selectedId = genderRadioGroup
+                                .getCheckedRadioButtonId();
+
+                        // find the radiobutton by returned id
+                        RadioButton selectedRadioButton = (RadioButton) formElementsView
+                                .findViewById(selectedId);
+
+
+
+                        /*toastString += "Selected radio button is: "
+                                + selectedRadioButton.getText() + "!\n";*/
+
+
+
+                        /*
+                         * Getting the value of an EditText.
+                         */
+                        /*toastString += "Name is: " + nameEditText.getText()
+                                + "!\n";*/
+
+                        //showToast(toastString);
+
+                        dialog.cancel();
+                    }
+
+                }).show();
     }
 
     //nuovo codice
@@ -98,12 +242,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     public static class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.poster)
         public ImageView posterView;
-        //nuovo codice
         @BindView(R.id.movie_title)
         public TextView title_movie;
         @BindView(R.id.movie_release_date)
         public TextView release_date;
-        //fine nuovo codice
+        //nuovo_codice
+        @BindView(R.id.editNotify)
+        public Button notifyButton;
+        @BindView(R.id.iWatchItMovie)
+        public Button watchedButton;
 
         public ViewHolder(View v) {
             super(v);
