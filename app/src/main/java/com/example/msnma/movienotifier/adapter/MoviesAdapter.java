@@ -35,7 +35,7 @@ import butterknife.ButterKnife;
 import static android.app.PendingIntent.getActivity;
 import static com.example.msnma.movienotifier.MoviesFragment.*;
 
-public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
+public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder>{
 
     private Context context;
     private List<Movie> movies;
@@ -43,6 +43,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     //per la data
     private EditText fromDateEtxt;
+    private boolean active = false;
     //private Context context;
 
     public MoviesAdapter(Context context, List<Movie> movies) {
@@ -76,7 +77,17 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                 /*String testo = movies.get(position).getTitle().toString();
                Toast tostato = Toast.makeText(context,testo,Toast.LENGTH_SHORT);
                 tostato.show();*/
-                alertFormElements();
+                alertFormElements(position);
+            }
+        });
+
+        holder.watchedButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view) {
+                String testo = movies.get(position).getTitle()+ "\n" + "I WATCH IT";
+                Toast tostato = Toast.makeText(context,testo,Toast.LENGTH_SHORT);
+                tostato.show();
             }
         });
 
@@ -88,7 +99,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     //nuovo codice riguardo l'alerDialog
 
-    public final void alertFormElements()
+    public final void alertFormElements(final int position)
     {
 
         /*
@@ -105,6 +116,29 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
         final RadioGroup genderRadioGroup = (RadioGroup) formElementsView
                 .findViewById(R.id.NotifyAlertRadioGroup);
+        //nuovo codice
+        genderRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+                                       {
+                                           @Override
+                                           public void onCheckedChanged(RadioGroup group, int checkedId)
+                                           {
+                                               switch (checkedId)
+                                               {
+                                                   case R.id.OneDayRadioButton:
+                                                       actv(false);
+                                                       break;
+
+                                                   case R.id.ReleaseDayRadioButton:
+                                                       actv(false);
+                                                       break;
+
+                                                   case R.id.OnRadioButton:
+                                                       actv(true);
+                                                       break;
+                                               }
+                                           }
+
+                                       });
 
         //questo sarà sostituito con un calendario.
         /*final EditText nameEditText = (EditText) formElementsView
@@ -112,6 +146,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
         //parte data
         fromDateEtxt = (EditText) formElementsView.findViewById(R.id.nameEditText);
+        fromDateEtxt.setEnabled(active);
+        fromDateEtxt.setClickable(active);
         fromDateEtxt.setInputType(InputType.TYPE_NULL);
         fromDateEtxt.requestFocus();
 
@@ -146,7 +182,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
         // the alert dialog
         new AlertDialog.Builder(context).setView(formElementsView)
-                .setTitle("Form Elements")
+                .setTitle(movies.get(position).getTitle()+" Notify")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @TargetApi(11)
                     public void onClick(DialogInterface dialog, int id) {
@@ -154,6 +190,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                         //fromDateEtxt.setText(dateFormatter.format(newDate.getTime()));
 
                         String toastString = "";
+                        String titleMovie = movies.get(position).getTitle();
+                        String releaseDate = String.valueOf(movies.get(position).getReleaseDate());
+                        String date = releaseDate.substring(0, 10);
+                        String year = releaseDate.substring(releaseDate.length()-5,releaseDate.length());
+                        releaseDate = date+year;
+
+                        toastString = toastString + titleMovie + "\n" + releaseDate +"\n";
+
+
 
                         /*
                          * Detecting whether the checkbox is checked or not.
@@ -168,17 +213,21 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                          * Getting the value of selected RadioButton.
                          */
                         // get selected radio button from radioGroup
-                        int selectedId = genderRadioGroup
-                                .getCheckedRadioButtonId();
+                        int selectedId = genderRadioGroup.getCheckedRadioButtonId();
 
                         // find the radiobutton by returned id
                         RadioButton selectedRadioButton = (RadioButton) formElementsView
                                 .findViewById(selectedId);
 
+                        if(selectedRadioButton.getId() == R.id.OnRadioButton)
+                        {
+                            toastString += "Selected radio button is: " + fromDateEtxt.getText();
+                        }
+                        else {
+                            toastString += "Selected radio button is: "
+                                    + selectedRadioButton.getText() + "!\n";
+                        }
 
-
-                        /*toastString += "Selected radio button is: "
-                                + selectedRadioButton.getText() + "!\n";*/
 
 
 
@@ -188,7 +237,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                         /*toastString += "Name is: " + nameEditText.getText()
                                 + "!\n";*/
 
-                        //showToast(toastString);
+                        Toast toast =  Toast.makeText(context, toastString, Toast.LENGTH_LONG);
+                        toast.show();
 
                         dialog.cancel();
                     }
@@ -255,6 +305,19 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         public ViewHolder(View v) {
             super(v);
             ButterKnife.bind(this, v);
+        }
+    }
+
+    //parte per attivare/disattivare l'editText
+
+
+
+    private void actv(final boolean active)
+    {
+        fromDateEtxt.setEnabled(active);
+        if (active)
+        {
+            fromDateEtxt.requestFocus();
         }
     }
 }

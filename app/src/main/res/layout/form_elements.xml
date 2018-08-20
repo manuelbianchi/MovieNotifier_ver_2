@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <!--<CheckBox
         android:id="@+id/myCheckBox"
@@ -14,7 +15,10 @@
     <RadioGroup
         android:id="@+id/NotifyAlertRadioGroup"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp">
+
         <!--android:layout_below="@+id/myCheckBox" >-->
 
         <RadioButton
@@ -29,36 +33,39 @@
             android:id="@+id/ReleaseDayRadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_below="@+id/OneDayRadioButton"
+            android:layout_alignParentLeft="true"
             android:text="Release day" />
 
         <RadioButton
             android:id="@+id/OnRadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_below="@+id/ReleaseDayRadioButton"
+            android:layout_alignParentLeft="true"
             android:text="On :" />
 
-        <EditText
-         android:id="@+id/nameEditText"
-         android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:focusable="true"
-            android:clickable="true"
-            android:inputType="date"
-         android:layout_alignParentLeft="true"
-         android:layout_toRightOf="@+id/OnRadioButton"
-         android:ems="10"
-         android:hint="Type your name here..." >
 
-        <requestFocus />
-        </EditText>
-
+        <!--android:layout_alignParentLeft="true"-->
 
 
     </RadioGroup>
+
+    <EditText
+        android:id="@+id/nameEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/NotifyAlertRadioGroup"
+        android:layout_toRightOf="@+id/NotifyAlertRadioGroup"
+        android:clickable="true"
+        android:ems="10"
+        android:focusable="true"
+        android:hint="Type date here..."
+        android:inputType="date"
+        android:textSize="14sp">
+
+        <requestFocus />
+    </EditText>
 
 
 </RelativeLayout>
