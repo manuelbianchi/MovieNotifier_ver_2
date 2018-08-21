@@ -1,7 +1,14 @@
 package com.example.msnma.movienotifier;
 
 
+import android.annotation.TargetApi;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,6 +17,9 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import com.example.msnma.movienotifier.notify.NotificationReceiver;
 
 import com.example.msnma.movienotifier.event.TwoPaneEvent;
 
@@ -18,6 +28,7 @@ import org.greenrobot.eventbus.EventBus;
 import butterknife.BindView;
 
 public class CoreActivity extends AppCompatActivity {
+
 
 
     SectionsPageAdapter mSectionsPageAdapter;
@@ -48,7 +59,13 @@ public class CoreActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         EventBus.getDefault().postSticky(new TwoPaneEvent(twoPane));
-    }
+
+        //parte push
+
+
+
+
+}
 
     public boolean onCreateOptionsMenu(Menu menu)
     {

@@ -110,10 +110,21 @@
 
             </LinearLayout>
             <!--todo we can add here the buttons -->
+            <Button android:id="@+id/show"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Show Notification"
+                />
 
+            <Button android:id="@+id/cancel"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Cancel Notification"/>
 
 
         </LinearLayout>
+
+
 
 
 

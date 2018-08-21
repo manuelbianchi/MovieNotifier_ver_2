@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:name="com.example.msnma.movienotifier.App"
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -40,10 +40,13 @@
                 android:value="com.example.msnma.movienotifier.SecondActivity" />
         </activity>
         <activity android:name=".GenreViewActivity" />
-        <activity android:name=".CoreActivity"/>
-        <activity android:name=".MovieActivity"/>
+        <activity android:name=".CoreActivity" />
+        <activity android:name=".MovieActivity" />
+
         <provider
-            android:name="com.example.msnma.movienotifier.provider.MovieContentProvider"
+            android:name=".provider.MovieContentProvider"
             android:authorities="com.example.msnma.movienotifier" />
+
     </application>
+
 </manifest>
