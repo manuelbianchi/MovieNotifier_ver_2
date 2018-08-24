@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -22,8 +23,11 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import com.example.msnma.movienotifier.MainActivity;
 import com.example.msnma.movienotifier.MoviesFragment;
 import com.example.msnma.movienotifier.R;
+import com.example.msnma.movienotifier.database.MovieDatabase;
+import com.example.msnma.movienotifier.databaseModel.MovieDBModel;
 import com.example.msnma.movienotifier.model.Movie;
 
 import java.util.Calendar;
@@ -31,6 +35,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Optional;
 
 import static android.app.PendingIntent.getActivity;
 import static com.example.msnma.movienotifier.MoviesFragment.*;
@@ -40,11 +45,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     private Context context;
     private List<Movie> movies;
     private View itemView;
+    private RecyclerView rv;
 
     //per la data
     private EditText fromDateEtxt;
     private boolean active = false;
     //private Context context;
+    private static String tipo = "NOTIFY";
 
     public MoviesAdapter(Context context, List<Movie> movies) {
         this.context = context;
@@ -52,9 +59,30 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     }
 
     @Override
-    public MoviesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_movie, parent, false);
-        return new ViewHolder(itemView);
+    public MoviesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+    {
+
+            View itemView;
+            /*if(getTipo().equals("Suggested"))
+            {
+                itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_movie, parent, false);
+                return new ViewHolder(itemView);
+            }
+                else if(getTipo().equals("Watched"))
+                {
+                    itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_movie_watched, parent, false);
+                    return new ViewHolder(itemView);
+                }
+                else if(getTipo().equals("Notify"))
+            {*/
+
+                itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_movie, parent, false);
+
+                return new ViewHolder(itemView);
+            //}
+
+
+        //return null;
     }
 
     @Override
@@ -70,26 +98,55 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         String date = yourString.substring(0, 10);
         String year = yourString.substring(yourString.length()-5,yourString.length());
         holder.release_date.setText(date+year);
-        holder.notifyButton.setOnClickListener(new View.OnClickListener()
+        //solo se è di tipo suggested
+        if(getTipo().equals("SUGGESTED"))
         {
-            @Override
-            public void onClick(View view) {
+            //disabilitare bottone remove
+
+            holder.removeButton.setVisibility(View.GONE);
+            holder.notifyButton.setVisibility(View.VISIBLE);
+            holder.watchedButton.setVisibility(View.VISIBLE);
+
+            holder.notifyButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
                 /*String testo = movies.get(position).getTitle().toString();
                Toast tostato = Toast.makeText(context,testo,Toast.LENGTH_SHORT);
                 tostato.show();*/
-                alertFormElements(position);
-            }
-        });
-
-        holder.watchedButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view) {
-                String testo = movies.get(position).getTitle()+ "\n" + "I WATCH IT";
+                    alertFormElements(position);
+                }
+            });
+            holder.watchedButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                /*String testo = movies.get(position).getTitle()+ "\n" + "I WATCH IT";
                 Toast tostato = Toast.makeText(context,testo,Toast.LENGTH_SHORT);
-                tostato.show();
-            }
-        });
+                tostato.show();*/
+
+                    // public MovieDBModel(int id, String title,  String overview, String posterUrl, String backdropUrl, String trailerUrl,
+                    //                        Date releaseDate, float rating, boolean adult){
+                    MovieDBModel mdm = new MovieDBModel(movies.get(position).getId(), movies.get(position).getTitle(), movies.get(position).getOverview(),
+                            movies.get(position).getPosterUrl(), movies.get(position).getBackdropUrl(), movies.get(position).getTrailerUrl(),
+                            movies.get(position).getReleaseDate(), movies.get(position).getRating(), movies.get(position).isAdult());
+                    MovieDatabase.insertMovie(mdm, 2, MainActivity.getMovieDatabase());
+                    String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
+                    Toast tostato = Toast.makeText(context, testo, Toast.LENGTH_SHORT);
+                    tostato.show();
+                }
+            });
+         }
+         else if (getTipo().equals("WATCHED"))
+        {
+            holder.notifyButton.setVisibility(View.GONE);
+            holder.watchedButton.setVisibility(View.GONE);
+            holder.removeButton.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            holder.notifyButton.setVisibility(View.GONE);
+            holder.watchedButton.setVisibility(View.GONE);
+            holder.removeButton.setVisibility(View.VISIBLE);
+        }
 
 
 
@@ -296,11 +353,14 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         public TextView title_movie;
         @BindView(R.id.movie_release_date)
         public TextView release_date;
-        //nuovo_codice
         @BindView(R.id.editNotify)
         public Button notifyButton;
         @BindView(R.id.iWatchItMovie)
         public Button watchedButton;
+        @BindView(R.id.remove)
+        public Button removeButton;
+
+
 
         public ViewHolder(View v) {
             super(v);
@@ -319,5 +379,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         {
             fromDateEtxt.requestFocus();
         }
+    }
+
+    public static void setTipo(String tipo) {
+        MoviesAdapter.tipo = tipo;
+    }
+
+    public static String getTipo() {
+        return tipo;
     }
 }

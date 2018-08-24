@@ -3,14 +3,18 @@ package com.example.msnma.movienotifier;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +29,7 @@ import com.example.msnma.movienotifier.adapter.MoviesAdapter;
 import com.example.msnma.movienotifier.callback.MoviesCallback;
 import com.example.msnma.movienotifier.event.ShowMovieEvent;
 import com.example.msnma.movienotifier.event.TwoPaneEvent;
+import com.example.msnma.movienotifier.event.UpdateFavoritesEvent;
 import com.example.msnma.movienotifier.model.Movie;
 import com.example.msnma.movienotifier.util.MoviesUtil;
 import com.rohit.recycleritemclicksupport.RecyclerItemClickSupport;
@@ -42,6 +47,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import icepick.Icepick;
 import icepick.State;
+
+import static android.support.design.widget.TabLayout.*;
 
 public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
         RecyclerItemClickSupport.OnItemClickListener {
@@ -89,12 +96,20 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
             fragType = Type.SUGGESTED;
             twoPane = true;
         }
+        onRefresh();
+
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_movies_list, container, false);
         ButterKnife.bind(this, rootView);
+
+
+
+
         init();
         return rootView;
     }
@@ -122,13 +137,14 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
         showMovieAtPosition(position);
     }
 
-    //    @Subscribe(sticky = true)
-    //    public void onEvent(UpdateFavoritesEvent event) {
-    //        if (fragType == Type.FAVORITES) {
-    //            EventBus.getDefault().removeStickyEvent(UpdateFavoritesEvent.class);
-    //            onRefresh();
-    //       }
-    //    }
+    //proviamo questo codice
+        //@Subscribe(sticky = true)
+        //public void onEvent(UpdateFavoritesEvent event) {
+        //    if (fragType == Type.WATCHED) {
+        //        EventBus.getDefault().removeStickyEvent(UpdateFavoritesEvent.class);
+        //        onRefresh();
+        //   }
+        //}
 
     @Subscribe(sticky = true)
     public void onEvent(TwoPaneEvent event) {

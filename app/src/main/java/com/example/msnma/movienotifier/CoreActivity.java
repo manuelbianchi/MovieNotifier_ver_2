@@ -2,6 +2,7 @@ package com.example.msnma.movienotifier;
 
 
 import android.annotation.TargetApi;
+import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -12,13 +13,17 @@ import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
+import com.example.msnma.movienotifier.MoviesFragment;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TabHost;
+import android.widget.Toast;
+
+import com.example.msnma.movienotifier.adapter.MoviesAdapter;
 import com.example.msnma.movienotifier.notify.NotificationReceiver;
 
 import com.example.msnma.movienotifier.event.TwoPaneEvent;
@@ -27,7 +32,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 
-public class CoreActivity extends AppCompatActivity {
+public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
 
 
 
@@ -54,13 +59,41 @@ public class CoreActivity extends AppCompatActivity {
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setOffscreenPageLimit(2);
+        mViewPager.setOffscreenPageLimit(1);
         mViewPager.setAdapter(mSectionsPageAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.addOnTabSelectedListener(
+                new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
+                    @Override
+                    public void onTabSelected(TabLayout.Tab tab) {
+                        super.onTabSelected(tab);
+                        final int numTab = tab.getPosition();
+                        //Toast.makeText(getApplicationContext(),tab.getText(), Toast.LENGTH_LONG).show();
+                         switch (tab.getPosition()) {
+                             case 0: {
+                                 MoviesAdapter.setTipo(String.valueOf(MoviesFragment.Type.NOTIFY));
+                                 break;
+                             }
+                             case 1: {
+                                 MoviesAdapter.setTipo(String.valueOf(MoviesFragment.Type.SUGGESTED));
+                                 break;
+                             }
+
+                             case 2: {
+                                 MoviesAdapter.setTipo(String.valueOf(MoviesFragment.Type.WATCHED));
+                                 break;
+                             }
+
+                         }
+
+                    }
+                });
         EventBus.getDefault().postSticky(new TwoPaneEvent(twoPane));
 
-        //parte push
+
+
+
 
 
 
@@ -96,6 +129,8 @@ public class CoreActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+
     public void pressAccountButton(MenuItem item)
     {
         Intent intent = new Intent(this, AccountActivity.class);
@@ -105,4 +140,21 @@ public class CoreActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+
+
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
+    }
 }
