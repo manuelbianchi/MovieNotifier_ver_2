@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -54,6 +55,7 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
         RecyclerItemClickSupport.OnItemClickListener {
     private static final String ARG_FRAG_TYPE = "fragType";
     private static final String ARG_FRAG_TWO_PANE = "twoPane";
+    private Context context;
 
 
     public enum Type {
@@ -96,7 +98,8 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
             fragType = Type.SUGGESTED;
             twoPane = true;
         }
-        onRefresh();
+        //onRefresh();
+
 
 
 
@@ -109,8 +112,10 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
 
 
 
-
+        //onRefresh();
         init();
+
+
         return rootView;
     }
 
@@ -127,7 +132,8 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
     }
 
     @Override
-    public void onRefresh() {
+    public void onRefresh()
+    {
         movies = null;
         updateMovies();
     }
@@ -215,6 +221,15 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
     {
         alertFormElements();
     }*/
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            Log.i("INFO","Refresh eseguito con successo");
+            getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+        }
+        //Toast.makeText(context,"Benvenuto", Toast.LENGTH_LONG).show();
+    }
 
 
 }

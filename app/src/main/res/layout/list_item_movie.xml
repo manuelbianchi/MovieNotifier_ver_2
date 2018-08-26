@@ -9,86 +9,92 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
         android:layout_marginTop="4dp"
+        android:layout_marginRight="2dp"
         android:layout_marginBottom="4dp"
+        android:orientation="horizontal"
         android:background="@drawable/card_background">
 
         <ImageView
             android:id="@+id/poster"
             android:layout_width="185px"
             android:layout_height="277px"
-            android:src="@drawable/poster_placeholder"
+            android:contentDescription="TODO"
             android:scaleType="centerCrop"
-            android:contentDescription="TODO" />
-       <LinearLayout
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:orientation="vertical"
-           android:gravity="center_vertical">
-         <TextView
-            android:id="@+id/movie_title"
-            android:layout_width="fill_parent"
+            android:src="@drawable/poster_placeholder" />
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-             android:textStyle="bold"
-            android:layout_gravity="left|center_vertical"
-            android:textSize="20dip"
-            android:layout_marginLeft="10dip"
-            />
-         <TextView
-            android:id="@+id/movie_release_date"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="left|center_vertical"
-            android:textSize="20dip"
-            android:layout_marginLeft="10dip"
-             />
-           <LinearLayout
-               android:layout_width="wrap_content"
-               android:layout_height="match_parent"
-               android:gravity="bottom"
-               android:orientation="horizontal">
+            android:orientation="vertical">
 
-               <Button
-                   android:id="@+id/editNotify"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:background="@android:color/transparent"
-                   android:onClick="pressEditNotifyButton"
-                   android:text="Notify"
-                   android:textColor="@android:color/holo_blue_dark"
-                   android:textStyle="bold" />
+            <TextView
+                android:id="@+id/movie_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:layout_marginLeft="10dip"
+                android:layout_weight="1"
+                android:textSize="20dip"
+                android:textStyle="bold" />
 
-               <Button
-                   android:id="@+id/iWatchItMovie"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:background="@android:color/transparent"
-                   android:text="I watch it"
-                   android:textColor="@android:color/holo_blue_dark"
-                   android:textStyle="bold" />
-
-               <Button
-                   android:id="@+id/remove"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:background="@android:color/transparent"
-                   android:text="Remove"
-                   android:textColor="@android:color/holo_blue_dark"
-                   android:textStyle="bold" />
-
-
-           </LinearLayout>
+            <TextView
+                android:id="@+id/movie_release_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:layout_marginLeft="10dip"
+                android:layout_weight="1"
+                android:textSize="20dip" />
         </LinearLayout>
 
+          <LinearLayout
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:layout_weight="1"
+              android:gravity="bottom"
+              android:orientation="horizontal">
 
-    </LinearLayout>
+              <Button
+                  android:id="@+id/editNotify"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:background="@android:color/transparent"
+                  android:onClick="pressEditNotifyButton"
+                  android:text="Notify"
+                  android:textColor="@android:color/holo_blue_dark"
+                  android:textStyle="bold" />
+
+              <Button
+                  android:id="@+id/iWatchItMovie"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:background="@android:color/transparent"
+                  android:text="I watch it"
+                  android:textColor="@android:color/holo_blue_dark"
+                  android:textStyle="bold" />
+
+              <Button
+                  android:id="@+id/remove"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:background="@android:color/transparent"
+                  android:text="Remove"
+                  android:textColor="@android:color/holo_blue_dark"
+                  android:textStyle="bold" />
+
+
+          </LinearLayout>
+
+        </LinearLayout>
+      </LinearLayout>
+
+
+
+
 </FrameLayout>
-<!--<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/poster"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:scaleType="centerCrop"
-    android:src="@drawable/poster_placeholder" />-->
+

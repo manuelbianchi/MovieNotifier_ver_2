@@ -3,19 +3,22 @@ package com.example.msnma.movienotifier;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.example.msnma.movienotifier.adapter.MoviesAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SectionsPageAdapter extends FragmentPagerAdapter
+public class SectionsPageAdapter extends FragmentStatePagerAdapter
 {
     boolean twoPane;
 
     public SectionsPageAdapter(FragmentManager fm, boolean twoPane) {
         super(fm);
         this.twoPane = twoPane;
+
+
     }
 
     @Override
@@ -50,4 +53,10 @@ public class SectionsPageAdapter extends FragmentPagerAdapter
     public int getCount() {
         return 3;
     }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
+
 }

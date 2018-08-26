@@ -98,14 +98,23 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         String date = yourString.substring(0, 10);
         String year = yourString.substring(yourString.length()-5,yourString.length());
         holder.release_date.setText(date+year);
+        if(getTipo().equals("NOTIFY"))
+        {
+            Toast.makeText(context,"Notify", Toast.LENGTH_LONG).show();
+            holder.notifyButton.setVisibility(View.GONE);
+            holder.watchedButton.setVisibility(View.GONE);
+            holder.removeButton.setVisibility(View.VISIBLE);
+        }
         //solo se è di tipo suggested
         if(getTipo().equals("SUGGESTED"))
         {
             //disabilitare bottone remove
 
+
             holder.removeButton.setVisibility(View.GONE);
             holder.notifyButton.setVisibility(View.VISIBLE);
             holder.watchedButton.setVisibility(View.VISIBLE);
+            Toast.makeText(context,"Suggested", Toast.LENGTH_LONG).show();
 
             holder.notifyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -135,18 +144,25 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                 }
             });
          }
-         else if (getTipo().equals("WATCHED"))
+         if (getTipo().equals("WATCHED"))
         {
+
+
             holder.notifyButton.setVisibility(View.GONE);
             holder.watchedButton.setVisibility(View.GONE);
             holder.removeButton.setVisibility(View.VISIBLE);
+
+
+            holder.removeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view)
+                {
+                 //da implementare
+                }
+            });
+            Toast.makeText(context,"WATCHED", Toast.LENGTH_LONG).show();
         }
-        else
-        {
-            holder.notifyButton.setVisibility(View.GONE);
-            holder.watchedButton.setVisibility(View.GONE);
-            holder.removeButton.setVisibility(View.VISIBLE);
-        }
+
 
 
 
