@@ -35,7 +35,7 @@ public class MovieDatabase extends SQLiteOpenHelper {
     private static final String TABLE_MOVIE_TYPE = "MovieTypeTable";
     //Table Fields
     private static final String MOVIE_ID ="movie_id";
-    private static final String TITLE ="title";
+    public static final String TITLE ="title";
     private static final String OVERVIEW = "overview";
     private static final String POSTER_URL = "posterUrl";
     private static final String BACKDROP_URL = "backdropUrl";
