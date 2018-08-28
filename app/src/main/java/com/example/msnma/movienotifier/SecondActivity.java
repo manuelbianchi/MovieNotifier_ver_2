@@ -101,7 +101,8 @@ public class SecondActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setOffscreenPageLimit(1);
         mViewPager.setAdapter(searchAdapter);
-
+        searchView.setFocusable(false);
+        searchView.setIconified(true);
         EventBus.getDefault().postSticky(new TwoPaneEvent(false));
     }
 
