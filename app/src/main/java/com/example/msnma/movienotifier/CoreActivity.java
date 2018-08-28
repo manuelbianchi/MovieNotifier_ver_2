@@ -50,8 +50,7 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
     boolean twoPane;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_core);
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
