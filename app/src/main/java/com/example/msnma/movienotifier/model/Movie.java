@@ -13,6 +13,20 @@ public class Movie implements Serializable {
     private Date releaseDate;
     private float rating;
     private boolean adult;
+    //nuovo campo
+    private Date notifyDate;
+
+
+    //inizio nuovo codice
+    public Date getNotifyDate() {
+        return notifyDate;
+    }
+
+    public void setNotifyDate(Date notifyDate) {
+        this.notifyDate = notifyDate;
+    }
+    //fine nuovo codice
+
 
     public int getId() {
 

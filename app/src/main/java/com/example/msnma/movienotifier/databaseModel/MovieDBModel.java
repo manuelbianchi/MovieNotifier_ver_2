@@ -13,12 +13,23 @@ public class MovieDBModel {
     private Date releaseDate;
     private float rating;
     private boolean adult;
+    private Date notifyDate;
+
+    public Date getNotifyDate() {
+        return notifyDate;
+    }
+
+    public void setNotifyDate(Date notifyDate) {
+        this.notifyDate = notifyDate;
+    }
+
+
 
     public MovieDBModel(){
     }
 
     public MovieDBModel(int id, String title,  String overview, String posterUrl, String backdropUrl, String trailerUrl,
-                        Date releaseDate, float rating, boolean adult){
+                        Date releaseDate, float rating, boolean adult, Date notifyDate ){
         this.id = id;
         this.title = title;
         this.overview = overview;
@@ -28,6 +39,7 @@ public class MovieDBModel {
         this.releaseDate = releaseDate;
         this.rating = rating;
         this.adult = adult;
+        this.notifyDate = notifyDate;
     }
 
     public int getId() {
