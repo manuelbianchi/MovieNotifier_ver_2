@@ -13,6 +13,8 @@ import android.view.View;
 
 import com.example.msnma.movienotifier.database.MovieDatabase;
 
+import java.text.ParseException;
+
 public class MainActivity extends AppCompatActivity
 {
     public static MainActivity mainActivity;
@@ -26,18 +28,17 @@ public class MainActivity extends AppCompatActivity
         db = new MovieDatabase(this);
         mainActivity = this;
         //se la lista è vuota parte la main activity
-        if(GenreViewActivity.readList(this, "generi").isEmpty()) {
-            setContentView(R.layout.activity_main);
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
-        }
-        //altrimenti se la lista non è vuota tu parti con questa activity
-        else
-        {
-            Intent intent = new Intent(this, GenreViewActivity.class);
-            startActivity(intent);
-//            Intent intent = new Intent(this, .class);
-//            startActivity(intent);
+        try {
+            if(GenreViewActivity.readList(this, "generi").isEmpty() && db.isEmpty()) {
+                setContentView(R.layout.activity_main);
+                Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+                setSupportActionBar(toolbar);
+            } else {
+                Intent intent = new Intent(this, CoreActivity.class);
+                startActivity(intent);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
 
@@ -46,9 +47,6 @@ public class MainActivity extends AppCompatActivity
     public void pressAddButton(View view)
     {
         Intent intent = new Intent(this, SecondActivity.class);
-        //EditText editText = (EditText) findViewById(R.id.editText);
-        //String message = editText.getText().toString();
-        //intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
     }
 
@@ -102,9 +100,6 @@ public class MainActivity extends AppCompatActivity
 
     public void pressAccountButton(MenuItem item) {
         Intent intent = new Intent(this, AccountActivity.class);
-        //EditText editText = (EditText) findViewById(R.id.editText);
-        //String message = editText.getText().toString();
-        //intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
     }
 

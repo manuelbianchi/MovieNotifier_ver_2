@@ -14,6 +14,7 @@ import com.example.msnma.movienotifier.MoviesFragment;
 import com.example.msnma.movienotifier.R;
 import com.example.msnma.movienotifier.callback.MoviesCallback;
 import com.example.msnma.movienotifier.database.MovieDatabase;
+import com.example.msnma.movienotifier.databaseModel.MovieDBModel;
 import com.example.msnma.movienotifier.mapper.MovieMapper;
 import com.example.msnma.movienotifier.model.Movie;
 import com.example.msnma.movienotifier.provider.MovieContract;
@@ -119,17 +120,21 @@ public class MoviesUtil {
     }
 
     private static void getMoviesFromApi(Activity activity, String type, String apiUrl) {
+        String finalApiUrl = String.format(apiUrl, activity.getString(R.string.tmdb_api_key), 1);
         try {
-            JSONArray moviesJson = WEBB.get(apiUrl)
+            JSONArray moviesJson = WEBB.get(finalApiUrl)
                     .asJsonObject()
                     .getBody()
                     .getJSONArray("results");
             List<Movie> movies = toMovies(activity, moviesJson);
+            movies = filterSuggestedMovies(movies);
             deleteMovies(activity, type);
             saveMovies(activity, type, movies);
 //            MovieDatabase.saveMoviesOnDB(movies, "notify");
 //            MovieDatabase.saveMoviesOnDB(movies, "watched");
         } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
             e.printStackTrace();
         }
     }
@@ -313,5 +318,21 @@ public class MoviesUtil {
             e.printStackTrace();
             return "";
         }
+    }
+
+    public static List<Movie> filterSuggestedMovies(List<Movie> movies) throws ParseException {
+        List<MovieDBModel> allMovies = MovieDatabase.getAllMovies();
+        List<Movie> freeMovies = movies;
+
+        for(int a = 0; a<freeMovies.size(); a++) {
+            for (MovieDBModel mv : allMovies) {
+                if(mv.getTitle().equals(freeMovies.get(a).getTitle())){
+                    freeMovies.remove(a);
+                    break;
+                }
+            }
+        }
+
+        return freeMovies;
     }
 }

@@ -219,5 +219,4 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
         alertFormElements();
     }*/
 
-
 }

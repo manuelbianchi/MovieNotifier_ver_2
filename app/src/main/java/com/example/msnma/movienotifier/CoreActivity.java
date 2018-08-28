@@ -179,9 +179,13 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
     public void pressAccountButton(MenuItem item)
     {
         Intent intent = new Intent(this, AccountActivity.class);
-        //EditText editText = (EditText) findViewById(R.id.editText);
-        //String message = editText.getText().toString();
-        //intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
+    }
+
+    /** Called when the user taps the Send button */
+    public void pressAddButton(View view)
+    {
+        Intent intent = new Intent(this, SecondActivity.class);
         startActivity(intent);
     }
 

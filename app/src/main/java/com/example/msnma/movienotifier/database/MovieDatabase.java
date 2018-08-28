@@ -67,7 +67,7 @@ public class MovieDatabase extends SQLiteOpenHelper {
             + TABLE_MOVIE_TYPE + "(" + MOVIE_TYPE_ID + " INTEGER PRIMARY KEY,"
             + M_ID + " INTEGER," + T_ID + " INTEGER" + ")";
 
-    SQLiteDatabase database;
+    static SQLiteDatabase database;
 
     public MovieDatabase(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -278,5 +278,53 @@ public class MovieDatabase extends SQLiteOpenHelper {
         // updating row
         return db.update(TABLE_MOVIE_TYPE, values, M_ID + " = ?",
                 new String[] { String.valueOf(id) });
+    }
+
+    public boolean isEmpty() throws ParseException {
+        boolean isEmpty = false;
+        List<MovieDBModel> movie1 = getAllMovieByType("NOTIFY");
+        List<MovieDBModel> movie2 = getAllMovieByType("WATCHED");
+        if(movie1.isEmpty() && movie2.isEmpty()){
+            isEmpty = true;
+        }
+        return isEmpty;
+    }
+
+    public static List<MovieDBModel> getAllMovies() throws ParseException {
+        List<MovieDBModel> movies = new ArrayList<MovieDBModel>();
+
+        String selectQuery = "SELECT  * FROM " + TABLE_MOVIE;
+
+        Log.e(LOG, selectQuery);
+
+        SQLiteDatabase db = database;
+        Cursor c = db.rawQuery(selectQuery, null);
+        SimpleDateFormat sdf3 = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+        // looping through all rows and adding to list
+        if (c.moveToFirst()) {
+            do {
+                MovieDBModel td = new MovieDBModel();
+                td.setId(c.getInt((c.getColumnIndex(MOVIE_ID))));
+                td.setTitle((c.getString(c.getColumnIndex(TITLE))));
+                td.setOverview(c.getString(c.getColumnIndex(OVERVIEW)));
+                td.setPosterUrl(c.getString((c.getColumnIndex(POSTER_URL))));
+                td.setBackdropUrl((c.getString(c.getColumnIndex(BACKDROP_URL))));
+                td.setTrailerUrl(c.getString(c.getColumnIndex(TRAILER_URL)));
+                String dateString =c.getString((c.getColumnIndex(RELEASE_DATE)));
+                Date date = sdf3.parse(dateString);
+                td.setReleaseDate(date);
+                td.setRating((c.getFloat(c.getColumnIndex(RATING))));
+                int adult = c.getInt(c.getColumnIndex(ADULT));
+                if(adult == 0){
+                    td.setAdult(true);          //NOT sure if is the contrary
+                }else{
+                    td.setAdult(false);
+                }
+
+                movies.add(td);
+            } while (c.moveToNext());
+        }
+
+        return movies;
     }
 }
