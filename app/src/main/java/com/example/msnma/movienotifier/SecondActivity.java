@@ -46,6 +46,12 @@ public class SecondActivity extends AppCompatActivity {
         setContentView(R.layout.activity_second);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        myToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),CoreActivity.class));
+            }
+        });
         // Get a support ActionBar corresponding to this toolbar
         ActionBar ab = getSupportActionBar();
 
@@ -140,15 +146,6 @@ public class SecondActivity extends AppCompatActivity {
         }*/
         return super.onOptionsItemSelected(item);
     }
-
-    /*@Override
-    public void onBackPressed() {
-        if (searchView.isSearchOpen()) {
-            searchView.closeSearch();
-        } else {
-            super.onBackPressed();
-        }
-    }*/
 
     /** Called when the user taps the Send button */
     public void pressAccountButton(MenuItem item)
