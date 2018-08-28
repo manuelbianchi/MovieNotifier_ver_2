@@ -17,8 +17,6 @@ public class SectionsPageAdapter extends FragmentStatePagerAdapter
     public SectionsPageAdapter(FragmentManager fm, boolean twoPane) {
         super(fm);
         this.twoPane = twoPane;
-
-
     }
 
     @Override

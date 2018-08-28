@@ -35,8 +35,9 @@ public class MoviesUtil {
     private static final String TMDB_POSTER_URL = "https://image.tmdb.org/t/p/w185%s";
     private static final String TMDB_BACKDROP_URL = "https://image.tmdb.org/t/p/w300%s";
 
-    private static final String TMDB_UPCOMING_MOVIES ="http://api.themoviedb.org/3/movie/upcoming?api_key=f329e1bdcc6da3f6ed39da7278144be6";
-    private static final String TMDB_IN_THEATRES = "http://api.themoviedb.org/3/movie/now_playing?api_key=f329e1bdcc6da3f6ed39da7278144be6";
+    private static final String TMDB_UPCOMING_MOVIES ="http://api.themoviedb.org/3/movie/upcoming?api_key=%s";
+    private static final String TMDB_IN_THEATRES = "http://api.themoviedb.org/3/movie/now_playing?api_key=%s";
+    private static final String TMDB_SEARCH ="https://api.themoviedb.org/3/search/movie?api_key=%s&language=en-US&query=%s&page=%s&s&include_adult=false";
 
     private static final String TYPE_NOTIFY = "NOTIFY";
     private static final String TYPE_WATCHED = "WATCHED";
@@ -79,6 +80,10 @@ public class MoviesUtil {
         getMovies(activity, TYPE_WATCHED, callback);
     }
 
+    public static void getSeachMovies(Activity activity, String query, MoviesCallback callback) {
+        getMovies(activity, query, callback);
+    }
+
     private static void getMovies(final Activity activity, final String type, final MoviesCallback callback) {
 
         AsyncTask.execute(new Runnable() {
@@ -98,20 +103,24 @@ public class MoviesUtil {
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-                } else {
+                } else  if (type.equals(TYPE_SUGGESTED))  {
                     if (Util.isConnected(activity, false)) {
-                        getMoviesFromApi(activity, TYPE_SUGGESTED);
+                        getMoviesFromApi(activity, TYPE_SUGGESTED, TMDB_UPCOMING_MOVIES);
                     }
                     getMoviesFromDb(activity, type, callback);
+                } else{
+                    if (Util.isConnected(activity, false)) {
+                        getMoviesFromApiForSearch(activity, type);
+                    }
+                    getMoviesFromDb(activity, "search", callback);
                 }
             }
         });
     }
 
-    private static void getMoviesFromApi(Activity activity, String type) {
-        String apiUrl = String.format(TMDB_API_MOVIES_URL, "popular", activity.getString(R.string.tmdb_api_key), 1);
+    private static void getMoviesFromApi(Activity activity, String type, String apiUrl) {
         try {
-            JSONArray moviesJson = WEBB.get(TMDB_UPCOMING_MOVIES)
+            JSONArray moviesJson = WEBB.get(apiUrl)
                     .asJsonObject()
                     .getBody()
                     .getJSONArray("results");
@@ -149,6 +158,26 @@ public class MoviesUtil {
                     callback.error(e);
                 }
             });
+        }
+    }
+
+    public static void getMoviesFromApiForSearch(Activity activity, String query) {
+        String apiUrl;
+        if(query.equals("")){
+            apiUrl = String.format(TMDB_IN_THEATRES, activity.getString(R.string.tmdb_api_key), query, 1);
+        }else{
+            apiUrl = String.format(TMDB_SEARCH, activity.getString(R.string.tmdb_api_key), query, 1);
+        }
+        try {
+            JSONArray moviesJson = WEBB.get(apiUrl)
+                    .asJsonObject()
+                    .getBody()
+                    .getJSONArray("results");
+            List<Movie> movies = toMovies(activity, moviesJson);
+            deleteMovies(activity, "search");
+            saveMovies(activity, "search", movies);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 

@@ -13,18 +13,16 @@
         android:title="@string/action_account"
         app:showAsAction="ifRoom" />
 
-    <!--<item
-        android:id="@+id/action_search"
-        android:orderInCategory="100"
-        android:icon="@drawable/ic_search_black_24dp"
-        app:showAsAction="ifRoom"
-        android:title="search" />-->
-
-
     <!-- Settings, should always be in the overflow -->
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
         app:showAsAction="never"/>
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/movies"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        tools:listitem="@layout/list_item_movie" />
 </menu>
