@@ -4,11 +4,13 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -31,6 +34,7 @@ import com.example.msnma.movienotifier.databaseModel.MovieDBModel;
 import com.example.msnma.movienotifier.model.Movie;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -49,7 +53,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     //per la data
     private EditText fromDateEtxt;
+    private EditText eReminderTime;
     private boolean active = false;
+
+    private int mese;
+    private int anno;
+    private int giorno;
+    private int ora;
+    private int minuti;
+    private int secondi;
     //private Context context;
     private static String tipo = "NOTIFY";
 
@@ -101,8 +113,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         if(getTipo().equals("NOTIFY"))
         {
             Toast.makeText(context,"Notify", Toast.LENGTH_LONG).show();
+            holder.movie_notify.setVisibility(View.VISIBLE);
             holder.notifyButton.setVisibility(View.GONE);
             holder.watchedButton.setVisibility(View.GONE);
+            holder.changeDateTimeButton.setVisibility(View.VISIBLE);
             holder.removeButton.setVisibility(View.VISIBLE);
         }
         //solo se è di tipo suggested
@@ -110,10 +124,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         {
             //disabilitare bottone remove
 
-
+            holder.movie_notify.setVisibility(View.GONE);
             holder.removeButton.setVisibility(View.GONE);
             holder.notifyButton.setVisibility(View.VISIBLE);
             holder.watchedButton.setVisibility(View.VISIBLE);
+            holder.changeDateTimeButton.setVisibility(View.GONE);
             Toast.makeText(context,"Suggested", Toast.LENGTH_LONG).show();
 
             holder.notifyButton.setOnClickListener(new View.OnClickListener() {
@@ -136,21 +151,24 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                     //                        Date releaseDate, float rating, boolean adult){
                     MovieDBModel mdm = new MovieDBModel(movies.get(position).getId(), movies.get(position).getTitle(), movies.get(position).getOverview(),
                             movies.get(position).getPosterUrl(), movies.get(position).getBackdropUrl(), movies.get(position).getTrailerUrl(),
-                            movies.get(position).getReleaseDate(), movies.get(position).getRating(), movies.get(position).isAdult());
+                            movies.get(position).getReleaseDate(), movies.get(position).getRating(), movies.get(position).isAdult(),null);
                     MovieDatabase.insertMovie(mdm, 2, MainActivity.getMovieDatabase());
                     String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
                     Toast tostato = Toast.makeText(context, testo, Toast.LENGTH_SHORT);
                     tostato.show();
                 }
             });
+
+
          }
          if (getTipo().equals("WATCHED"))
         {
 
-
+            holder.movie_notify.setVisibility(View.GONE);
             holder.notifyButton.setVisibility(View.GONE);
             holder.watchedButton.setVisibility(View.GONE);
             holder.removeButton.setVisibility(View.VISIBLE);
+            holder.changeDateTimeButton.setVisibility(View.GONE);
 
 
             holder.removeButton.setOnClickListener(new View.OnClickListener() {
@@ -229,6 +247,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         //setDateTimeField();
         //fromDatePickerDialog.show();
 
+        //Calendario ci servirà dopo per inserire i dati nel DB
+
         fromDateEtxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -240,6 +260,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                                                   int monthOfYear, int dayOfMonth) {
                                 fromDateEtxt.setText(dayOfMonth + "-"
                                         + (monthOfYear + 1) + "-" + year);
+                                anno = year;
+                                giorno = dayOfMonth;
+                                mese = monthOfYear + 1;
 
                             }
                         },
@@ -247,6 +270,40 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                         c.get(Calendar.MONTH),
                         c.get(Calendar.DAY_OF_MONTH));
                 dpd.show();
+            }
+        });
+
+
+        //parte orario
+        ora = 9;
+        minuti = 30;
+
+        eReminderTime = (EditText) formElementsView.findViewById(R.id.timeEditText);
+        eReminderTime.setText( ora + ":" + minuti);
+        eReminderTime.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                Calendar mcurrentTime = Calendar.getInstance();
+                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                int minute = mcurrentTime.get(Calendar.MINUTE);
+                TimePickerDialog mTimePicker;
+                mTimePicker = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
+
+
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute)
+                    {
+                        eReminderTime.setText( selectedHour + ":" + selectedMinute);
+                        ora = selectedHour;
+                        minuti = selectedMinute;
+                    }
+                    //}
+                }, hour, minute, true);//Yes 24 hour time
+                mTimePicker.setTitle("Select Time");
+                mTimePicker.show();
+
             }
         });
 
@@ -294,7 +351,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
                         if(selectedRadioButton.getId() == R.id.OnRadioButton)
                         {
-                            toastString += "Selected radio button is: " + fromDateEtxt.getText();
+                            toastString += "Selected radio button is: " + fromDateEtxt.getText() +"!\n";
                         }
                         else {
                             toastString += "Selected radio button is: "
@@ -302,6 +359,30 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                         }
 
 
+                        toastString += eReminderTime.getText();
+
+
+                        //Date(int year, int month, int date, int hrs, int min, int sec)
+                        Date datatime = new Date (anno-1900,mese-1,giorno,ora, minuti, secondi);
+
+
+                        //ora scriviamo tutta questa roba sulla base di dati
+
+
+                /*String testo = movies.get(position).getTitle()+ "\n" + "I WATCH IT";
+                Toast tostato = Toast.makeText(context,testo,Toast.LENGTH_SHORT);
+                tostato.show();*/
+
+                // public MovieDBModel(int id, String title,  String overview, String posterUrl, String backdropUrl, String trailerUrl,
+                        //                        Date releaseDate, float rating, boolean adult, date datatime){
+                                Log.i("DATATIME", datatime.toString());
+                                MovieDBModel mdm2 = new MovieDBModel(movies.get(position).getId(), movies.get(position).getTitle(), movies.get(position).getOverview(),
+                                        movies.get(position).getPosterUrl(), movies.get(position).getBackdropUrl(), movies.get(position).getTrailerUrl(),
+                                        movies.get(position).getReleaseDate(), movies.get(position).getRating(), movies.get(position).isAdult(),datatime);
+                                MovieDatabase.insertMovie(mdm2, 1, MainActivity.getMovieDatabase());
+                                String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
+                                Toast tostato = Toast.makeText(context, testo, Toast.LENGTH_SHORT);
+                                tostato.show();
 
 
                         /*
@@ -369,12 +450,17 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         public TextView title_movie;
         @BindView(R.id.movie_release_date)
         public TextView release_date;
+        @BindView(R.id.movie_time_notify)
+        public TextView movie_notify;
         @BindView(R.id.editNotify)
         public Button notifyButton;
         @BindView(R.id.iWatchItMovie)
         public Button watchedButton;
         @BindView(R.id.remove)
         public Button removeButton;
+        @BindView(R.id.change)
+        public Button changeDateTimeButton;
+
 
 
 

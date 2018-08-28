@@ -50,12 +50,13 @@ public class MovieDatabase extends SQLiteOpenHelper {
     private static final String MOVIE_TYPE_ID = "movie_type_id";
     private static final String M_ID = "movie_id";
     private static final String T_ID = "type_id";
+    private static final String notify_datetime = "notify_datetime";
 
     // Table Create Statements
     private static final String CREATE_TABLE_MOVIE = "CREATE TABLE "
             + TABLE_MOVIE + "(" + MOVIE_ID + " INTEGER PRIMARY KEY," + TITLE + " TEXT,"
             + OVERVIEW + " TEXT," + POSTER_URL + " TEXT," + BACKDROP_URL + " TEXT," + TRAILER_URL + " TEXT,"
-            + RATING + " REAL," + ADULT + " INTEGER," + RELEASE_DATE + " DATETIME" + ")";
+            + RATING + " REAL," + ADULT + " INTEGER," + RELEASE_DATE + " DATETIME," + notify_datetime + " DATETIME"  + ")";
 
     // Tag table create statement
     private static final String CREATE_TABLE_TYPE = "CREATE TABLE " + TABLE_TYPE
@@ -139,7 +140,13 @@ public class MovieDatabase extends SQLiteOpenHelper {
             values.put(RELEASE_DATE, movie.getReleaseDate().toString());
             values.put(RATING, movie.getRating());
             values.put(ADULT, movie.isAdult());
-
+            //inizio nuovo codice
+            if(typeId == 1) {
+                values.put(notify_datetime, movie.getNotifyDate().toString());
+                Log.i("TYPEID", "Siamo dentro");
+            }
+            //else values.putNull(NOTIFY_TIME_DATE);
+            //fine nuovo codice
             // insert row
             long movieId = database.insert(TABLE_MOVIE, null, values);
             insertMovieType(movieId, typeId, db);

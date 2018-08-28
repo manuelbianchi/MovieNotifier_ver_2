@@ -49,7 +49,16 @@
                 android:layout_gravity="left|center_vertical"
                 android:layout_marginLeft="10dip"
                 android:layout_weight="1"
-                android:textSize="20dip" />
+                android:textSize="14dip" />
+
+            <TextView
+                android:id="@+id/movie_time_notify"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|center_vertical"
+                android:layout_marginLeft="10dip"
+                android:layout_weight="1"
+                android:textSize="14dip" />
         </LinearLayout>
 
           <LinearLayout
@@ -84,6 +93,15 @@
                   android:layout_height="wrap_content"
                   android:background="@android:color/transparent"
                   android:text="Remove"
+                  android:textColor="@android:color/holo_blue_dark"
+                  android:textStyle="bold" />
+
+              <Button
+                  android:id="@+id/change"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:background="@android:color/transparent"
+                  android:text="Change Date and Time"
                   android:textColor="@android:color/holo_blue_dark"
                   android:textStyle="bold" />
 
