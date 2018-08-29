@@ -249,7 +249,14 @@ public class MovieDatabase extends SQLiteOpenHelper {
                 }else{
                     td.setAdult(false);
                 }
-
+                //nuovo codice
+                String datenotifyString = c.getString(c.getColumnIndex(notify_datetime));
+                if(datenotifyString != null)
+                {
+                    Date datenotify = sdf3.parse(datenotifyString);
+                    td.setNotifyDate(datenotify);
+                }
+                        //fine nuovo codice
                 movies.add(td);
             } while (c.moveToNext());
         }
@@ -277,6 +284,19 @@ public class MovieDatabase extends SQLiteOpenHelper {
 
         // updating row
         return db.update(TABLE_MOVIE_TYPE, values, M_ID + " = ?",
+                new String[] { String.valueOf(id) });
+    }
+
+    //da sistemare.
+
+    public int updateNotifyDate(long id, Date datetime ) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(notify_datetime,datetime.toString());
+
+        // updating row
+        return db.update(TABLE_MOVIE, values,  M_ID + " = ?",
                 new String[] { String.valueOf(id) });
     }
 

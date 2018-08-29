@@ -2,6 +2,7 @@ package com.example.msnma.movienotifier;
 
 
 import android.annotation.TargetApi;
+import android.app.AlarmManager;
 import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -32,6 +33,9 @@ import com.example.msnma.movienotifier.event.TwoPaneEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import butterknife.BindView;
 
 import static android.support.v4.view.PagerAdapter.POSITION_NONE;
@@ -40,7 +44,8 @@ import static java.security.AccessController.getContext;
 
 public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
 
-
+    private static Context context;
+    //Context context;
     SectionsPageAdapter mSectionsPageAdapter;
     @BindView(R.id.movies)
     ViewPager mViewPager;
@@ -219,6 +224,40 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
 
+    }
+
+    public void notifyPush(Date datetime)
+    {
+        Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        //Intent intent = new Intent(context,NotificationReceiver.class);
+        //PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
+        //nuovo codice
+        Intent intent = new Intent(CoreActivity.this , NotificationReceiver.class);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getService(CoreActivity.this, 0, intent, 0);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 12);
+        calendar.set(Calendar.MINUTE, 00);
+        calendar.set(Calendar.SECOND, 00);
+
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24*60*60*1000 , pendingIntent);  //set repeating every 24 hours
+
+
+
+        //fine nuovo codice
+        Notification notification = new Notification.Builder(context)
+                .setSound(soundUri)
+                .setContentIntent(pendingIntent)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle("Notifica")
+                .setContentText("Abbiamo le notifiche").
+                        addAction(R.drawable.ic_launcher_foreground, "Open", pendingIntent)
+                .addAction(0, "Remind", pendingIntent).build();
+
+        NotificationManager notifManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        notifManager.notify(0, notification);
     }
 
 

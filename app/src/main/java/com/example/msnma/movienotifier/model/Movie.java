@@ -22,7 +22,8 @@ public class Movie implements Serializable {
         return notifyDate;
     }
 
-    public void setNotifyDate(Date notifyDate) {
+    public void setNotifyDate(Date notifyDate)
+    {
         this.notifyDate = notifyDate;
     }
     //fine nuovo codice

@@ -19,6 +19,7 @@ public class MovieMapper {
         movie.setReleaseDate(movieDb.getReleaseDate());
         movie.setRating(movieDb.getRating());
         movie.setAdult(movieDb.isAdult());
+        movie.setNotifyDate(movieDb.getNotifyDate());
         return movie;
     }
 
@@ -33,6 +34,7 @@ public class MovieMapper {
         movie.setReleaseDate(movieDb.getReleaseDate());
         movie.setRating(movieDb.getRating());
         movie.setAdult(movieDb.isAdult());
+        movie.setNotifyDate(movieDb.getNotifyDate());
         return movie;
     }
 
