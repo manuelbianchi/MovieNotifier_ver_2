@@ -1,42 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     tools:context=".AccountActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Genres"
-        android:textColor="@color/black"
-        android:textSize="36sp"
-        android:textStyle="bold|italic" />
-    <!--android:autoLink="web"-->
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:elevation="4dp"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            tools:ignore="UnusedAttribute" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Genres"
+            app:layout_anchorGravity="center|top"
+            android:textColor="@color/black"
+            android:textSize="36sp"
+            android:textStyle="bold|italic" />
+        <!--android:autoLink="web"-->
 
 
-    <Button
-        android:id="@+id/lookup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Look up"
-        android:textSize="16dp" />
+        <Button
+            android:id="@+id/lookup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Look up"
+            android:textSize="16dp" />
 
-    <Button
-        android:id="@+id/done"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="pressDoneButton"
-        android:text="Done"
-        android:textSize="16dp" />
+        <Button
+            android:id="@+id/done"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="pressDoneButton"
+            android:text="Done"
+            android:textSize="16dp" />
 
-    <ListView
-        android:id="@+id/listview"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"/>
+        <ListView
+            android:id="@+id/listview"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"/>
 
-</LinearLayout>
+    </android.support.design.widget.AppBarLayout>
+</android.support.constraint.ConstraintLayout>

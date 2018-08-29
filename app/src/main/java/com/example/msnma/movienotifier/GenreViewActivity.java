@@ -7,7 +7,9 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
@@ -18,13 +20,22 @@ import java.util.List;
 
 public class GenreViewActivity extends AppCompatActivity {
 
-    //AccountActivity aa = new AccountActivity();
-
     private ListView lv;
     @Override
     public void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
         setContentView(R.layout.activity_genre_view);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),CoreActivity.class));
+            }
+        });
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+
         lv = findViewById(R.id.listview);
 
         // Instanciating an array list (you don't need to do this,
@@ -59,15 +70,6 @@ public class GenreViewActivity extends AppCompatActivity {
     public void pressEditButton(View view)
     {
         Intent intent = new Intent(this, AccountActivity.class);
-        //EditText editText = (EditText) findViewById(R.id.editText);
-        //String message = editText.getText().toString();
-        //intent.putExtra(EXTRA_MESSAGE, message);
-        startActivity(intent);
-    }
-
-    public void pressNextButton(View view)
-    {
-        Intent intent = new Intent( this, CoreActivity.class);
         startActivity(intent);
     }
 

@@ -5,22 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".MainActivity"
+    tools:context=".GenreViewActivity"
     tools:showIn="@layout/activity_core">
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/addButton"
+        android:id="@+id/editButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:clickable="true"
-        android:onClick="pressAddButton"
+        android:onClick="pressEditButton"
         app:backgroundTint="@android:color/black"
         app:layout_anchor="@+id/include"
         app:layout_anchorGravity="right|bottom"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@android:drawable/ic_search_category_default" />
+        app:srcCompat="@android:drawable/ic_menu_edit" />
 </android.support.constraint.ConstraintLayout>
