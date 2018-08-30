@@ -145,7 +145,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             String yourString1 = String.valueOf(movie.getNotifyDate());
             Log.i("STRINGA",yourString1);
             if(!(yourString1.equals("null"))) {
-                date = yourString1.substring(0, 10);
+                date = yourString1.substring(0, 16);
                 year = yourString1.substring(yourString1.length() - 5, yourString1.length());
 
                 //per fare il testo bold
