@@ -11,11 +11,15 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -119,7 +123,17 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         String yourString = String.valueOf(movie.getReleaseDate());
         String date = yourString.substring(0, 10);
         String year = yourString.substring(yourString.length()-5,yourString.length());
-        holder.release_date.setText(date+year);
+
+        //per fare il testo bold
+        final SpannableStringBuilder sb = new SpannableStringBuilder("Release: "+date+year);
+
+        final StyleSpan bss = new StyleSpan(android.graphics.Typeface.BOLD); // Span to make text bold
+        final StyleSpan nss = new StyleSpan(Typeface.NORMAL); //Span to make text italic
+        sb.setSpan(bss, 0, 7, Spannable.SPAN_INCLUSIVE_INCLUSIVE); // make first 4 characters Bold
+        sb.setSpan(nss, 7, sb.length()-1, Spannable.SPAN_INCLUSIVE_INCLUSIVE); // make last 2 characters Italic
+
+
+        holder.release_date.setText(sb);
         if(getTipo().equals("NOTIFY")) {
             Toast.makeText(context, "Notify", Toast.LENGTH_LONG).show();
             holder.movie_notify.setVisibility(View.VISIBLE);
@@ -127,7 +141,24 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             holder.watchedButton.setVisibility(View.GONE);
             holder.changeDateTimeButton.setVisibility(View.VISIBLE);
             holder.removeButton.setVisibility(View.VISIBLE);
-            holder.movie_notify.setText(String.valueOf(movie.getNotifyDate()));
+
+            String yourString1 = String.valueOf(movie.getNotifyDate());
+            Log.i("STRINGA",yourString1);
+            if(!(yourString1.equals("null"))) {
+                date = yourString1.substring(0, 10);
+                year = yourString1.substring(yourString1.length() - 5, yourString1.length());
+
+                //per fare il testo bold
+                final SpannableStringBuilder sb1 = new SpannableStringBuilder("Notify: " + date + year);
+
+                final StyleSpan bss1 = new StyleSpan(android.graphics.Typeface.BOLD); // Span to make text bold
+                final StyleSpan nss1 = new StyleSpan(Typeface.NORMAL); //Span to make text normal
+                sb1.setSpan(bss1, 0, 6, Spannable.SPAN_INCLUSIVE_INCLUSIVE); // make first 4 characters Bold
+                sb1.setSpan(nss1, 6, sb.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE); // make last 2 characters Italic
+
+
+                holder.movie_notify.setText(sb1);
+            }
 
             holder.removeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
