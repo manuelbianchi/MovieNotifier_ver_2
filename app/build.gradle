@@ -25,6 +25,10 @@ android {
 }
 
 dependencies {
+
+    def work_version = "1.0.0-alpha08"
+
+    implementation "android.arch.work:work-runtime:$work_version"
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'com.miguelcatalan:materialsearchview:1.4.0'

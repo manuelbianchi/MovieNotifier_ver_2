@@ -43,11 +43,17 @@ import com.example.msnma.movienotifier.database.MovieDatabase;
 import com.example.msnma.movienotifier.databaseModel.MovieDBModel;
 import com.example.msnma.movienotifier.model.Movie;
 import com.example.msnma.movienotifier.notify.NotificationReceiver;
+import com.example.msnma.movienotifier.notify.NotifyWorker;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Optional;
@@ -55,8 +61,11 @@ import butterknife.Optional;
 import static android.app.PendingIntent.getActivity;
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static com.example.msnma.movienotifier.MoviesFragment.*;
+import static com.example.msnma.movienotifier.notify.Constants.KEY_MOVIE;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder>{
+
+    private UUID notifyRequestID = null;
 
     private Context context;
     private List<Movie> movies;
@@ -79,6 +88,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     private static String tipo = "NOTIFY";
 
+    //non sono ancora sicuro se metterlo qui
+
+    private WorkManager mWorkManager;
+
     public MoviesAdapter(Context context, List<Movie> movies) {
         this.context = context;
         this.movies = movies;
@@ -87,6 +100,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     @Override
     public MoviesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
+
 
             View itemView;
             /*if(getTipo().equals("Suggested"))
@@ -113,7 +127,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        Movie movie = movies.get(position);
+        mWorkManager = WorkManager.getInstance();
+
+        final Movie movie = movies.get(position);
         Glide.with(context)
                 .load(movie.getPosterUrl())
                 .placeholder(R.drawable.poster_placeholder)
@@ -166,6 +182,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                     //da implementare quando ho searchable.xml
                     MovieDatabase md = new MovieDatabase(context);
                     md.deleteMovie(movies.get(position).getId());
+
+
                 }
 
 
@@ -200,6 +218,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                Toast tostato = Toast.makeText(context,testo,Toast.LENGTH_SHORT);
                 tostato.show();*/
                     alertFormElements(position, false);
+
                 }
             });
             holder.watchedButton.setOnClickListener(new View.OnClickListener() {
@@ -444,6 +463,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
 
 
+
                         toastString += eReminderTime.getText();
 
 
@@ -467,6 +487,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                                     movies.get(position).getPosterUrl(), movies.get(position).getBackdropUrl(), movies.get(position).getTrailerUrl(),
                                     movies.get(position).getReleaseDate(), movies.get(position).getRating(), movies.get(position).isAdult(), datatime);
                             MovieDatabase.insertMovie(mdm2, 1, MainActivity.getMovieDatabase());
+
+                            notifyRequestID= scheduleNotify(datatime,position);
+
+
                         }
                         else
                         {
@@ -474,6 +498,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                             MovieDatabase md = new MovieDatabase(context);
                             Log.i("DATATIME","ID"+ movies.get(position).getId() +"DATATIME: "+ datatime);
                             md.updateNotifyDate(movies.get(position).getId(),datatime);
+
+                            deleteNotify(notifyRequestID);
                         }
                             String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
                             Toast tostato = Toast.makeText(context, testo, Toast.LENGTH_SHORT);
@@ -596,6 +622,49 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     public void setDataTime(Date datatime)
     {
         this.datatime = datatime;
+    }
+
+
+    private Data createInputDataForUri(Movie movie) {
+        Data.Builder builder = new Data.Builder();
+        if (movie != null) {
+            builder.putString(KEY_MOVIE,movie.getTitle());
+        }
+        return builder.build();
+    }
+
+    private UUID scheduleNotify(Date d, int position)
+    {
+        long currentTime= System.currentTimeMillis();
+        //Calendar c = new Date;
+        long specificTimeToTrigger = d.getTime();
+                //d.getTimeToMillis();
+        long delayToPass = specificTimeToTrigger - currentTime;
+
+        /*OneTimeWorkRequest compressionWork =
+                new OneTimeWorkRequest.Builder(NotifyWorker.class)
+                        .setInputData(message)
+                        .setInitialDelay(delayToPass, TimeUnit.MILLISECONDS)
+                        .build();*/
+
+        //inizialmente è molto semplice la notifica
+        OneTimeWorkRequest notifyRequest =
+                new OneTimeWorkRequest.Builder(NotifyWorker.class)
+                        .setInputData(createInputDataForUri(movies.get(position)))
+                        .setInitialDelay(delayToPass,TimeUnit.MILLISECONDS)
+                        .build();
+        mWorkManager.enqueue(notifyRequest);
+        UUID notify_ID = notifyRequest.getId();
+
+        //WorkManager.getInstance().enqueue(compressionWork);
+
+        return notify_ID;
+
+    }
+
+    public void deleteNotify(UUID notify_ID)
+    {
+        WorkManager.getInstance().cancelWorkById(notify_ID);
     }
 
 

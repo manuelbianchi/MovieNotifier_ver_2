@@ -5,14 +5,18 @@ import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.FragmentTransaction;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import com.example.msnma.movienotifier.MoviesFragment;
@@ -27,6 +31,7 @@ import android.widget.TabHost;
 import android.widget.Toast;
 
 import com.example.msnma.movienotifier.adapter.MoviesAdapter;
+import com.example.msnma.movienotifier.notify.Constants;
 import com.example.msnma.movienotifier.notify.NotificationReceiver;
 
 import com.example.msnma.movienotifier.event.TwoPaneEvent;
@@ -38,7 +43,9 @@ import java.util.Date;
 
 import butterknife.BindView;
 
+import static android.support.v4.app.NotificationCompat.DEFAULT_ALL;
 import static android.support.v4.view.PagerAdapter.POSITION_NONE;
+import static com.example.msnma.movienotifier.notify.Constants.CHANNEL_ID;
 import static com.google.common.reflect.Reflection.initialize;
 import static java.security.AccessController.getContext;
 
@@ -225,9 +232,9 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
 
     }
 
-    public void notifyPush(Date datetime)
+    public static void notifyPush(String message, Context context)
     {
-        Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        /*Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         //Intent intent = new Intent(context,NotificationReceiver.class);
         //PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
@@ -241,7 +248,7 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
         calendar.set(Calendar.MINUTE, 00);
         calendar.set(Calendar.SECOND, 00);
 
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24*60*60*1000 , pendingIntent);  //set repeating every 24 hours
+        //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24*60*60*1000 , pendingIntent);  //set repeating every 24 hours
 
 
 
@@ -256,9 +263,43 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
                 .addAction(0, "Remind", pendingIntent).build();
 
         NotificationManager notifManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-        notifManager.notify(0, notification);
+        notifManager.notify(0, notification);*/
+        //codice di un altro programma
+
+        // Make a channel if necessary
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Create the NotificationChannel, but only on API 26+ because
+            // the NotificationChannel class is new and not in the support library
+            CharSequence name = Constants.VERBOSE_NOTIFICATION_CHANNEL_NAME;
+            String description = Constants.VERBOSE_NOTIFICATION_CHANNEL_DESCRIPTION;
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+
+            // Add the channel
+            NotificationManager notificationManager =
+                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(channel);
+            }
+        }
+
+        // Create the notification
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle(Constants.NOTIFICATION_TITLE)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setDefaults(DEFAULT_ALL);
+                //.setVibrate(new long[0]);
+
+        // Show the notification
+        NotificationManagerCompat.from(context).notify(Constants.NOTIFICATION_ID, builder.build());
     }
 
-
-
 }
+
+
+
+
