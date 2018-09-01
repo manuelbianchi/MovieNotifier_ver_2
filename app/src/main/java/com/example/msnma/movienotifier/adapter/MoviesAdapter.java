@@ -14,7 +14,9 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.text.Spannable;
@@ -79,9 +81,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     private EditText eReminderTime;
     private boolean active = false;
 
-    private int mese;
-    private int anno;
-    private int giorno;
+    private int mese = ((Calendar.getInstance().getTime().getMonth())+1);
+    private int anno = ((Calendar.getInstance().getTime().getYear())+1900);
+    private int giorno = Calendar.getInstance().getTime().getDate();
     private int ora;
     private int minuti;
     private int secondi;
@@ -326,6 +328,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         fromDateEtxt.setClickable(active);
         fromDateEtxt.setInputType(InputType.TYPE_NULL);
         fromDateEtxt.requestFocus();
+        Log.i("ACTIVE", String.valueOf(active));
+
+
 
 
         //metodo data
@@ -456,8 +461,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                         }
                         else if(selectedRadioButton.getId() == R.id.OnRadioButton)
                         {
+                            //fromDateEtxt.setText(Calendar.getInstance().getTime().getDate()+"-"+((Calendar.getInstance().getTime().getMonth())+1)+"-"+((Calendar.getInstance().getTime().getYear())+1900));
                             toastString += "Selected radio button is: " + fromDateEtxt.getText() +"!\n";
                             datatime = new Date (anno-1900,mese-1,giorno,ora, minuti, secondi);
+
 
                         }
 
@@ -604,6 +611,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         if (active)
         {
             fromDateEtxt.requestFocus();
+
+            fromDateEtxt.setText(giorno+"-"+mese+"-"+anno);
         }
     }
 
@@ -635,14 +644,14 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         return builder.build();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private UUID scheduleNotify(Date d, int position)
     {
-        Constraints myConstraints = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-             myConstraints = new Constraints.Builder()
+
+       Constraints myConstraints = new Constraints.Builder()
                     .setRequiresDeviceIdle(true)
                     .build();
-        }
+
         long currentTime= System.currentTimeMillis();
         //Calendar c = new Date;
         long specificTimeToTrigger = d.getTime();
@@ -659,8 +668,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         OneTimeWorkRequest notifyRequest =
                 new OneTimeWorkRequest.Builder(NotifyWorker.class)
                         .setInputData(createInputDataForUri(movies.get(position)))
-                        .setConstraints(myConstraints)
                         .setInitialDelay(delayToPass,TimeUnit.MILLISECONDS)
+                        .setConstraints(myConstraints)
                         .build();
         mWorkManager.enqueue(notifyRequest);
         UUID notify_ID = notifyRequest.getId();
