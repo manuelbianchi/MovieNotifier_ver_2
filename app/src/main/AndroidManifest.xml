@@ -51,6 +51,7 @@
         <provider
             android:name=".provider.MovieContentProvider"
             android:authorities="com.example.msnma.movienotifier" />
+        <receiver android:name=".notify.NotificationPublisher" />
 
     </application>
 
