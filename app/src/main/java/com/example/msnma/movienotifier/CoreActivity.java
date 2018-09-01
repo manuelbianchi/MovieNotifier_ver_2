@@ -75,85 +75,54 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setOffscreenPageLimit(1);
+        mViewPager.setOffscreenPageLimit(2);
         mViewPager.setAdapter(mSectionsPageAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-        tabLayout.addOnTabSelectedListener(
-                new TabLayout.ViewPagerOnTabSelectedListener(mViewPager) {
-                    @Override
-                    public void onTabSelected(TabLayout.Tab tab) {
-                        super.onTabSelected(tab);
-                        final int numTab = tab.getPosition();
 
-                        //Toast.makeText(getApplicationContext(),tab.getText(), Toast.LENGTH_LONG).show();
-                         switch (tab.getPosition()) {
-                             case 0: {
-
-                                 MoviesAdapter.setTipo(String.valueOf(MoviesFragment.Type.NOTIFY));
-                                 break;
-                             }
-                             case 1: {
-                                 MoviesAdapter.setTipo(String.valueOf(MoviesFragment.Type.SUGGESTED));
-                                 break;
-                             }
-
-                             case 2: {
-
-                                 MoviesAdapter.setTipo(String.valueOf(MoviesFragment.Type.WATCHED));
-                                 break;
-                             }
-
-                         }
-
-
-                    }
-
-                });
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
-                                               @Override
-                                               public void onPageSelected(int position) {
+            @Override
+            public void onPageSelected(int position) {
 
-                                                   //mViewPager.setCurrentItem(position);
-                                                   // ci sono vicinissimo alla soluzione.
-                                                   if(position == 0 || position == 2) {
-                                                       Fragment getFragment = getSupportFragmentManager().getFragments().get(position);
-                                                       if (getFragment instanceof MoviesFragment) {
-                                                           MoviesFragment thisFragment = (MoviesFragment) getFragment;
-                                                           thisFragment.onRefresh();
-                                                           Log.i("REFRESH","Dovrebbe essere refreshato");
-                                                       }
-                                                       Log.i("PAGINASELEZIONATA", "Esegue onResume " + position);
+                //mViewPager.setCurrentItem(position);
+                Fragment getFragment = getSupportFragmentManager().getFragments().get(position);
+                if (getFragment instanceof MoviesFragment) {
+                    MoviesFragment thisFragment = (MoviesFragment) getFragment;
+                    MoviesAdapter adapter = new MoviesAdapter(thisFragment.getContext(), thisFragment.movies, thisFragment);
+                    adapter.setFragment(thisFragment);
+                    switch (position) {
+                        case 0: {
+                            adapter.setTipo(String.valueOf(MoviesFragment.Type.NOTIFY));
+                            break;
+                        }
+                        case 1: {
+                            adapter.setTipo(String.valueOf(MoviesFragment.Type.SUGGESTED));
+                            break;
+                        }
+                        case 2: {
+                            adapter.setTipo(String.valueOf(MoviesFragment.Type.WATCHED));
+                            break;
+                        }
+                    }
+                    thisFragment.moviesView.setAdapter(adapter);
+                }
+                //Toast.makeText(CoreActivity.this,"Tab "+position,Toast.LENGTH_LONG).show();
+            }
 
-                                                   }
-                                                       //Toast.makeText(CoreActivity.this,"Tab "+position,Toast.LENGTH_LONG).show();
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels ) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
+            }
 
 
-
-
-
-                                               }
-
-                                               @Override
-                                               public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels )
-                                               {
-                                                   Fragment getFragment = getSupportFragmentManager().getFragments().get(position);
-                                                   if (getFragment instanceof MoviesFragment) {
-                                                       MoviesFragment thisFragment = (MoviesFragment) getFragment;
-                                                       if ((position == 0 || position == 2) && positionOffset == 0.0 && positionOffsetPixels == 0)
-                                                           thisFragment.onRefresh();
-                                                   }
-                                               }
-
-                                               @Override
-                                               public void onPageScrollStateChanged(int arg0) {
-                                               }
-
-
-                                           });
-                EventBus.getDefault().postSticky(new TwoPaneEvent(twoPane));
+        });
+        EventBus.getDefault().postSticky(new TwoPaneEvent(twoPane));
     }
 
     public boolean onCreateOptionsMenu(Menu menu)
@@ -210,16 +179,12 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
             mSectionsPageAdapter.notifyDataSetChanged();
             Log.i("INFOonResume", "Metodo onResume eseguito");
         }
-
-
     }
 
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
         //Log.i("INFOTAB", "La tabella selezionata è "+tab.getTag());
         onResume();
-
-
     }
 
     @Override

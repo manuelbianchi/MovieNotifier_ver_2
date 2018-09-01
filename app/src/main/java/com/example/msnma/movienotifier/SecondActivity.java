@@ -66,7 +66,7 @@ public class SecondActivity extends AppCompatActivity {
         searchView.setIconified(false);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         ab.setDisplayHomeAsUpEnabled(true);
-
+        MoviesAdapter.setTipo(String.valueOf(MoviesFragment.Type.SUGGESTED));
         searchAdapter = new SearchAdapter(getSupportFragmentManager(), "");
 
         // Set up the ViewPager with the sections adapter.

@@ -71,6 +71,7 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
     RecyclerView moviesView;
 
     View rootView;
+    static MoviesFragment fragmentInstance;
 
     public static MoviesFragment newInstance(Type fragType, boolean twoPane) {
         MoviesFragment fragment = new MoviesFragment();
@@ -78,6 +79,7 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
         args.putSerializable(ARG_FRAG_TYPE, fragType);
         args.putBoolean(ARG_FRAG_TWO_PANE, twoPane);
         fragment.setArguments(args);
+        fragmentInstance = fragment;
         return fragment;
     }
 
@@ -88,6 +90,7 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
         args.putBoolean(ARG_FRAG_TWO_PANE, twoPane);
         args.putString(ARG_FRAG_QUERY, query);
         fragment.setArguments(args);
+        fragmentInstance = fragment;
         return fragment;
     }
 
@@ -168,7 +171,15 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
                 public void success(List<Movie> result) {
                     movies = new ArrayList<>(result);
                     if (moviesView != null) {
-                        moviesView.setAdapter(new MoviesAdapter(getContext(), movies));
+                        MoviesAdapter adapter = new MoviesAdapter(getContext(), movies, fragmentInstance);
+                        if(fragType.toString().equals("SEARCH") || fragType.toString().equals("SUGGESTED")){
+                            adapter.setTipo(String.valueOf(MoviesFragment.Type.SUGGESTED));
+                        }else if(fragType.toString().equals("NOTIFY")){
+                            adapter.setTipo(String.valueOf(Type.NOTIFY));
+                        }else{
+                            adapter.setTipo(String.valueOf(Type.WATCHED));
+                        }
+                        moviesView.setAdapter(adapter);
                     }
                     refreshView.setRefreshing(false);
                 }
@@ -195,7 +206,7 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
                     break;
             }
         } else if (moviesView != null) {
-            moviesView.setAdapter(new MoviesAdapter(getContext(), movies));
+            moviesView.setAdapter(new MoviesAdapter(getContext(), movies, fragmentInstance));
             refreshView.setRefreshing(false);
         }
     }
