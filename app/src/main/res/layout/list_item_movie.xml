@@ -59,6 +59,7 @@
                 android:layout_marginLeft="10dip"
                 android:layout_weight="1"
                 android:textSize="14dip" />
+
         </LinearLayout>
 
           <LinearLayout
@@ -105,14 +106,8 @@
                   android:textColor="@android:color/holo_blue_dark"
                   android:textStyle="bold" />
 
-
           </LinearLayout>
-
         </LinearLayout>
       </LinearLayout>
-
-
-
-
 </FrameLayout>
 

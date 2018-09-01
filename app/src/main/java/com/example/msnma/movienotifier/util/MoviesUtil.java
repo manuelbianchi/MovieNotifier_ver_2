@@ -111,7 +111,11 @@ public class MoviesUtil {
                     getMoviesFromDb(activity, type, callback);
                 } else{
                     if (Util.isConnected(activity, false)) {
-                        getMoviesFromApiForSearch(activity, type);
+                        try {
+                            getMoviesFromApiForSearch(activity, type);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                     }
                     getMoviesFromDb(activity, "search", callback);
                 }
@@ -166,7 +170,7 @@ public class MoviesUtil {
         }
     }
 
-    public static void getMoviesFromApiForSearch(Activity activity, String query) {
+    public static void getMoviesFromApiForSearch(Activity activity, String query) throws ParseException {
         String apiUrl;
         if(query.equals("")){
             apiUrl = String.format(TMDB_IN_THEATRES, activity.getString(R.string.tmdb_api_key), query, 1);
@@ -179,6 +183,7 @@ public class MoviesUtil {
                     .getBody()
                     .getJSONArray("results");
             List<Movie> movies = toMovies(activity, moviesJson);
+            movies = filterSuggestedMovies(movies);
             deleteMovies(activity, "search");
             saveMovies(activity, "search", movies);
         } catch (JSONException e) {

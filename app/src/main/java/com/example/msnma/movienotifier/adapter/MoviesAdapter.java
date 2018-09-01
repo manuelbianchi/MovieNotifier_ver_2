@@ -1,20 +1,12 @@
 package com.example.msnma.movienotifier.adapter;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Typeface;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.text.Spannable;
@@ -42,7 +34,6 @@ import com.example.msnma.movienotifier.R;
 import com.example.msnma.movienotifier.database.MovieDatabase;
 import com.example.msnma.movienotifier.databaseModel.MovieDBModel;
 import com.example.msnma.movienotifier.model.Movie;
-import com.example.msnma.movienotifier.notify.NotificationReceiver;
 import com.example.msnma.movienotifier.notify.NotifyWorker;
 
 import java.util.Calendar;
@@ -57,11 +48,7 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Optional;
 
-import static android.app.PendingIntent.getActivity;
-import static android.content.Context.NOTIFICATION_SERVICE;
-import static com.example.msnma.movienotifier.MoviesFragment.*;
 import static com.example.msnma.movienotifier.notify.Constants.KEY_MOVIE;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder>{
@@ -93,18 +80,17 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     //non sono ancora sicuro se metterlo qui
 
     private WorkManager mWorkManager;
+    static MoviesFragment fragmentInstance;
 
-    public MoviesAdapter(Context context, List<Movie> movies) {
+    public MoviesAdapter(Context context, List<Movie> movies, MoviesFragment fragment) {
         this.context = context;
         this.movies = movies;
+        this.fragmentInstance = fragment;
     }
 
     @Override
-    public MoviesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
-    {
-
-
-            View itemView;
+    public MoviesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView;
             /*if(getTipo().equals("Suggested"))
             {
                 itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_movie, parent, false);
@@ -118,12 +104,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                 else if(getTipo().equals("Notify"))
             {*/
 
-                itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_movie, parent, false);
+        itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_movie, parent, false);
 
-                return new ViewHolder(itemView);
-            //}
-
-
+        return new ViewHolder(itemView);
+        //}
         //return null;
     }
 
@@ -156,8 +140,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             Toast.makeText(context, "Notify", Toast.LENGTH_LONG).show();
             holder.movie_notify.setVisibility(View.VISIBLE);
             holder.notifyButton.setVisibility(View.GONE);
-            holder.watchedButton.setVisibility(View.GONE);
             holder.changeDateTimeButton.setVisibility(View.VISIBLE);
+            holder.watchedButton.setVisibility(View.VISIBLE);
             holder.removeButton.setVisibility(View.VISIBLE);
 
             String yourString1 = String.valueOf(movie.getNotifyDate());
@@ -165,45 +149,48 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             if(!(yourString1.equals("null"))) {
                 date = yourString1.substring(0, 16);
                 year = yourString1.substring(yourString1.length() - 5, yourString1.length());
-
                 //per fare il testo bold
                 final SpannableStringBuilder sb1 = new SpannableStringBuilder("Notify: " + date + year);
-
                 final StyleSpan bss1 = new StyleSpan(android.graphics.Typeface.BOLD); // Span to make text bold
                 final StyleSpan nss1 = new StyleSpan(Typeface.NORMAL); //Span to make text normal
                 sb1.setSpan(bss1, 0, 6, Spannable.SPAN_INCLUSIVE_INCLUSIVE); // make first 4 characters Bold
                 sb1.setSpan(nss1, 6, sb.length() - 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE); // make last 2 characters Italic
-
-
                 holder.movie_notify.setText(sb1);
             }
 
             holder.removeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //da implementare quando ho searchable.xml
                     MovieDatabase md = new MovieDatabase(context);
                     md.deleteMovie(movies.get(position).getId());
-
-
+                    fragmentInstance.onRefresh();
                 }
-
-
             });
 
             holder.changeDateTimeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //da implementare quando ho searchable.xml
-                    //perché deleteMovie è privato?
                     alertFormElements(position, true);
+                }
+            });
+
+            holder.watchedButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    MovieDBModel mdm = new MovieDBModel(movies.get(position).getId(), movies.get(position).getTitle(), movies.get(position).getOverview(),
+                            movies.get(position).getPosterUrl(), movies.get(position).getBackdropUrl(), movies.get(position).getTrailerUrl(),
+                            movies.get(position).getReleaseDate(), movies.get(position).getRating(), movies.get(position).isAdult(),null);
+                    MovieDatabase.updateMovieType(movies.get(position).getId(), 2,MainActivity.getMovieDatabase());
+                    String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
+                    Toast tostato = Toast.makeText(context, testo, Toast.LENGTH_SHORT);
+                    tostato.show();
+                    fragmentInstance.onRefresh();
                 }
             });
         }
 
-            //solo se è di tipo suggested
-        if(getTipo().equals("SUGGESTED"))
-        {
+        //solo se è di tipo suggested
+        if(getTipo().equals("SUGGESTED")) {
             //disabilitare bottone remove
 
             holder.movie_notify.setVisibility(View.GONE);
@@ -216,22 +203,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             holder.notifyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                /*String testo = movies.get(position).getTitle().toString();
-               Toast tostato = Toast.makeText(context,testo,Toast.LENGTH_SHORT);
-                tostato.show();*/
                     alertFormElements(position, false);
-
                 }
             });
             holder.watchedButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                /*String testo = movies.get(position).getTitle()+ "\n" + "I WATCH IT";
-                Toast tostato = Toast.makeText(context,testo,Toast.LENGTH_SHORT);
-                tostato.show();*/
-
-                    // public MovieDBModel(int id, String title,  String overview, String posterUrl, String backdropUrl, String trailerUrl,
-                    //                        Date releaseDate, float rating, boolean adult){
                     MovieDBModel mdm = new MovieDBModel(movies.get(position).getId(), movies.get(position).getTitle(), movies.get(position).getOverview(),
                             movies.get(position).getPosterUrl(), movies.get(position).getBackdropUrl(), movies.get(position).getTrailerUrl(),
                             movies.get(position).getReleaseDate(), movies.get(position).getRating(), movies.get(position).isAdult(),null);
@@ -239,13 +216,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                     String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
                     Toast tostato = Toast.makeText(context, testo, Toast.LENGTH_SHORT);
                     tostato.show();
+                    fragmentInstance.onRefresh();
                 }
             });
 
 
-         }
-         if (getTipo().equals("WATCHED"))
-        {
+        }
+        if (getTipo().equals("WATCHED")) {
 
             holder.movie_notify.setVisibility(View.GONE);
             holder.notifyButton.setVisibility(View.GONE);
@@ -253,31 +230,22 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             holder.removeButton.setVisibility(View.VISIBLE);
             holder.changeDateTimeButton.setVisibility(View.GONE);
 
-
             holder.removeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view)
-                {
+                public void onClick(View view) {
                     MovieDatabase md = new MovieDatabase(context);
                     md.deleteMovie(movies.get(position).getId());
-
+                    fragmentInstance.onRefresh();
                 }
             });
             Toast.makeText(context,"WATCHED", Toast.LENGTH_LONG).show();
         }
-
-
-
-
-
     }
 
 
     //nuovo codice riguardo l'alerDialog
 
-    public final void alertFormElements(final int position, final boolean modify)
-    {
-
+    public final void alertFormElements(final int position, final boolean modify) {
         /*
          * Inflate the XML view. activity_main is in
          * res/layout/form_elements.xml
@@ -294,27 +262,27 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                 .findViewById(R.id.NotifyAlertRadioGroup);
         //nuovo codice
         genderRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-                                       {
-                                           @Override
-                                           public void onCheckedChanged(RadioGroup group, int checkedId)
-                                           {
-                                               switch (checkedId)
-                                               {
-                                                   case R.id.OneDayRadioButton:
-                                                       actv(false);
-                                                       break;
+        {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId)
+            {
+                switch (checkedId)
+                {
+                    case R.id.OneDayRadioButton:
+                        actv(false);
+                        break;
 
-                                                   case R.id.ReleaseDayRadioButton:
-                                                       actv(false);
-                                                       break;
+                    case R.id.ReleaseDayRadioButton:
+                        actv(false);
+                        break;
 
-                                                   case R.id.OnRadioButton:
-                                                       actv(true);
-                                                       break;
-                                               }
-                                           }
+                    case R.id.OnRadioButton:
+                        actv(true);
+                        break;
+                }
+            }
 
-                                       });
+        });
 
         //questo sarà sostituito con un calendario.
         /*final EditText nameEditText = (EditText) formElementsView
@@ -358,7 +326,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             }
         });
 
-
         //parte orario
         ora = 9;
         minuti = 30;
@@ -392,9 +359,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             }
         });
 
-
-
-
         // the alert dialog
         new AlertDialog.Builder(context).setView(formElementsView)
                 .setTitle(movies.get(position).getTitle()+" Notify")
@@ -412,9 +376,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                         releaseDate = date+year;
 
                         toastString = toastString + titleMovie + "\n" + releaseDate +"\n";
-
-
-
                         /*
                          * Detecting whether the checkbox is checked or not.
                          */
@@ -434,8 +395,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                         RadioButton selectedRadioButton = (RadioButton) formElementsView
                                 .findViewById(selectedId);
                         Date datatime = null;
-                        if(selectedRadioButton.getId() == R.id.ReleaseDayRadioButton)
-                        {
+                        if(selectedRadioButton.getId() == R.id.ReleaseDayRadioButton) {
                             toastString += "Selected radio button is: " + selectedRadioButton.getText() +"!\n";
                             Date release = movies.get(position).getReleaseDate();
                             release.setHours(ora);
@@ -444,8 +404,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                             datatime = new Date (anno-1900,mese-1,giorno,ora, minuti, secondi);
 
                         }
-                        else if(selectedRadioButton.getId() == R.id.OneDayRadioButton)
-                        {
+                        else if(selectedRadioButton.getId() == R.id.OneDayRadioButton) {
                             toastString += "Selected radio button is: "
                                     + selectedRadioButton.getText() + "!\n";
                             Date release = movies.get(position).getReleaseDate();
@@ -454,21 +413,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                             release.setSeconds(secondi);
                             datatime = new Date (anno-1900,mese-1,giorno-1,release.getHours(),release.getMinutes(), release.getSeconds());
                         }
-                        else if(selectedRadioButton.getId() == R.id.OnRadioButton)
-                        {
+                        else if(selectedRadioButton.getId() == R.id.OnRadioButton) {
                             toastString += "Selected radio button is: " + fromDateEtxt.getText() +"!\n";
                             datatime = new Date (anno-1900,mese-1,giorno,ora, minuti, secondi);
-
                         }
 
                         setDataTime(datatime);
-
-
-
-
                         toastString += eReminderTime.getText();
-
-
                         //Date(int year, int month, int date, int hrs, int min, int sec)
                         //Date datatime = new Date (anno-1900,mese-1,giorno,ora, minuti, secondi);
 
@@ -479,9 +430,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                 /*String testo = movies.get(position).getTitle()+ "\n" + "I WATCH IT";
                 Toast tostato = Toast.makeText(context,testo,Toast.LENGTH_SHORT);
                 tostato.show();*/
-                        if(modify == false)
-                        {
-
+                        if(modify == false) {
                             // public MovieDBModel(int id, String title,  String overview, String posterUrl, String backdropUrl, String trailerUrl,
                             //                        Date releaseDate, float rating, boolean adult, date datatime){
                             //Log.i("DATATIME", datatime.toString());
@@ -489,26 +438,20 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                                     movies.get(position).getPosterUrl(), movies.get(position).getBackdropUrl(), movies.get(position).getTrailerUrl(),
                                     movies.get(position).getReleaseDate(), movies.get(position).getRating(), movies.get(position).isAdult(), datatime);
                             MovieDatabase.insertMovie(mdm2, 1, MainActivity.getMovieDatabase());
-
                             notifyRequestID= scheduleNotify(datatime,position);
-
-
+                            fragmentInstance.onRefresh();
                         }
-                        else
-                        {
-                         // provare la base di dati
+                        else {
+                            // provare la base di dati
                             MovieDatabase md = new MovieDatabase(context);
                             Log.i("DATATIME","ID"+ movies.get(position).getId() +"DATATIME: "+ datatime);
                             md.updateNotifyDate(movies.get(position).getId(),datatime);
-
                             deleteNotify(notifyRequestID);
+                            fragmentInstance.onRefresh();
                         }
-                            String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
-                            Toast tostato = Toast.makeText(context, testo, Toast.LENGTH_SHORT);
-                            tostato.show();
-
-
-
+                        String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
+                        Toast tostato = Toast.makeText(context, testo, Toast.LENGTH_SHORT);
+                        tostato.show();
                         /*
                          * Getting the value of an EditText.
                          */
@@ -527,32 +470,24 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     //nuovo codice
     /*@Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
         ViewHolder holder = null;
-
         LayoutInflater mInflater = (LayoutInflater) context
                 .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.list_item_movie, null);
             holder = new ViewHolder();
-
-
             holder.title_movie = (TextView) convertView.findViewById(R.id.movie_title);
             holder.release_date = (TextView) convertView
                     .findViewById(R.id.movie_release_date);
-
             Movie row_pos = movies.get(position);
-
             //holder.profile_pic.setImageResource(row_pos.getProfile_pic_id());
             holder.title_movie.setText(row_pos.getTitle());
             holder.release_date.setText((CharSequence) row_pos.getReleaseDate());
             //holder.contactType.setText(row_pos.getContactType());
-
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-
         return convertView;
     }*/
 
@@ -585,9 +520,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         @BindView(R.id.change)
         public Button changeDateTimeButton;
 
-
-
-
         public ViewHolder(View v) {
             super(v);
             ButterKnife.bind(this, v);
@@ -595,9 +527,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     }
 
     //parte per attivare/disattivare l'editText
-
-
-
     private void actv(final boolean active)
     {
         fromDateEtxt.setEnabled(active);
@@ -611,18 +540,19 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         MoviesAdapter.tipo = tipo;
     }
 
-    public static String getTipo()
-        {
+    public static void setFragment(MoviesFragment fragment) {
+        MoviesAdapter.fragmentInstance = fragment;
+    }
+
+    public static String getTipo() {
         return tipo;
     }
 
-    public Date getDatatime()
-    {
+    public Date getDatatime() {
         return datatime;
     }
 
-    public void setDataTime(Date datatime)
-    {
+    public void setDataTime(Date datatime) {
         this.datatime = datatime;
     }
 
@@ -635,18 +565,17 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         return builder.build();
     }
 
-    private UUID scheduleNotify(Date d, int position)
-    {
+    private UUID scheduleNotify(Date d, int position) {
         Constraints myConstraints = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-             myConstraints = new Constraints.Builder()
+            myConstraints = new Constraints.Builder()
                     .setRequiresDeviceIdle(true)
                     .build();
         }
         long currentTime= System.currentTimeMillis();
         //Calendar c = new Date;
         long specificTimeToTrigger = d.getTime();
-                //d.getTimeToMillis();
+        //d.getTimeToMillis();
         long delayToPass = specificTimeToTrigger - currentTime;
 
         /*OneTimeWorkRequest compressionWork =
@@ -671,10 +600,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     }
 
-    public void deleteNotify(UUID notify_ID)
-    {
+    public void deleteNotify(UUID notify_ID) {
         WorkManager.getInstance().cancelWorkById(notify_ID);
     }
-
 
 }

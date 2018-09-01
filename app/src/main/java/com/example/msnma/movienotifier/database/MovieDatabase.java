@@ -268,6 +268,7 @@ public class MovieDatabase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_MOVIE, MOVIE_ID + " = ?",
                 new String[] { String.valueOf(tado_id) });
+        deleteMovieType(tado_id);
     }
 
     public void deleteMovieType(long tado_id) {
@@ -276,14 +277,14 @@ public class MovieDatabase extends SQLiteOpenHelper {
                 new String[] { String.valueOf(tado_id) });
     }
 
-    public int updateMovieType(long id, long tag_id) {
-        SQLiteDatabase db = this.getWritableDatabase();
+    public static void updateMovieType(long id, long tag_id, MovieDatabase datab) {
+        SQLiteDatabase db = datab.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(T_ID, tag_id);
 
         // updating row
-        return db.update(TABLE_MOVIE_TYPE, values, M_ID + " = ?",
+        db.update(TABLE_MOVIE_TYPE, values, M_ID + " = ?",
                 new String[] { String.valueOf(id) });
     }
 
