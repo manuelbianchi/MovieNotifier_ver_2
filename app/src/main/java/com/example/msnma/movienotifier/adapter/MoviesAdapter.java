@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import androidx.work.Constraints;
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
@@ -66,6 +67,7 @@ import static com.example.msnma.movienotifier.notify.Constants.KEY_MOVIE;
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder>{
 
     private UUID notifyRequestID = null;
+
 
     private Context context;
     private List<Movie> movies;
@@ -635,6 +637,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     private UUID scheduleNotify(Date d, int position)
     {
+        Constraints myConstraints = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+             myConstraints = new Constraints.Builder()
+                    .setRequiresDeviceIdle(true)
+                    .build();
+        }
         long currentTime= System.currentTimeMillis();
         //Calendar c = new Date;
         long specificTimeToTrigger = d.getTime();
@@ -651,6 +659,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         OneTimeWorkRequest notifyRequest =
                 new OneTimeWorkRequest.Builder(NotifyWorker.class)
                         .setInputData(createInputDataForUri(movies.get(position)))
+                        .setConstraints(myConstraints)
                         .setInitialDelay(delayToPass,TimeUnit.MILLISECONDS)
                         .build();
         mWorkManager.enqueue(notifyRequest);
