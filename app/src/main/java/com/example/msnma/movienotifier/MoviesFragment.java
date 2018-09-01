@@ -71,6 +71,7 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
     RecyclerView moviesView;
 
     View rootView;
+
     static MoviesFragment fragmentInstance;
 
     public static MoviesFragment newInstance(Type fragType, boolean twoPane) {

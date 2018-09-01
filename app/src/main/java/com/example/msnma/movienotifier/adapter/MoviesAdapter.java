@@ -384,7 +384,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                         String date = releaseDate.substring(0, 10);
                         String year = releaseDate.substring(releaseDate.length()-5,releaseDate.length());
                         releaseDate = date+year;
-
                         toastString = toastString + titleMovie + "\n" + releaseDate +"\n";
                         /*
                          * Detecting whether the checkbox is checked or not.
