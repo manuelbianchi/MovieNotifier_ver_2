@@ -85,13 +85,13 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
 
             @Override
             public void onPageSelected(int position) {
-
+                SectionsPageAdapter spa = (SectionsPageAdapter) mViewPager.getAdapter();
                 //mViewPager.setCurrentItem(position);
                 Fragment getFragment = getSupportFragmentManager().getFragments().get(position);
                 if (getFragment instanceof MoviesFragment) {
                     MoviesFragment thisFragment = (MoviesFragment) getFragment;
-                    MoviesAdapter adapter = new MoviesAdapter(thisFragment.getContext(), thisFragment.movies, thisFragment);
-                    adapter.setFragment(thisFragment);
+                    MoviesAdapter adapter = new MoviesAdapter(thisFragment.getContext(), thisFragment.movies, spa);
+//                    adapter.setFragment(thisFragment);
                     switch (position) {
                         case 0: {
                             adapter.setTipo(String.valueOf(MoviesFragment.Type.NOTIFY));
@@ -122,6 +122,8 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
 
 
         });
+        mViewPager.setCurrentItem(0);
+
         EventBus.getDefault().postSticky(new TwoPaneEvent(twoPane));
     }
 

@@ -31,6 +31,7 @@ import com.bumptech.glide.Glide;
 import com.example.msnma.movienotifier.MainActivity;
 import com.example.msnma.movienotifier.MoviesFragment;
 import com.example.msnma.movienotifier.R;
+import com.example.msnma.movienotifier.SectionsPageAdapter;
 import com.example.msnma.movienotifier.database.MovieDatabase;
 import com.example.msnma.movienotifier.databaseModel.MovieDBModel;
 import com.example.msnma.movienotifier.model.Movie;
@@ -81,11 +82,20 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     private WorkManager mWorkManager;
     static MoviesFragment fragmentInstance;
+    static SectionsPageAdapter spa;
 
     public MoviesAdapter(Context context, List<Movie> movies, MoviesFragment fragment) {
         this.context = context;
         this.movies = movies;
         this.fragmentInstance = fragment;
+        this.spa = null;
+    }
+
+    public MoviesAdapter(Context context, List<Movie> movies, SectionsPageAdapter spa) {
+        this.context = context;
+        this.movies = movies;
+        this.spa = spa;
+        this.fragmentInstance = null;
     }
 
     @Override
@@ -163,7 +173,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                 public void onClick(View view) {
                     MovieDatabase md = new MovieDatabase(context);
                     md.deleteMovie(movies.get(position).getId());
-                    fragmentInstance.onRefresh();
+                    refreshLists();
                 }
             });
 
@@ -184,7 +194,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                     String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
                     Toast tostato = Toast.makeText(context, testo, Toast.LENGTH_SHORT);
                     tostato.show();
-                    fragmentInstance.onRefresh();
+                    refreshLists();
                 }
             });
         }
@@ -216,7 +226,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                     String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
                     Toast tostato = Toast.makeText(context, testo, Toast.LENGTH_SHORT);
                     tostato.show();
-                    fragmentInstance.onRefresh();
+                    refreshLists();
                 }
             });
 
@@ -235,7 +245,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                 public void onClick(View view) {
                     MovieDatabase md = new MovieDatabase(context);
                     md.deleteMovie(movies.get(position).getId());
-                    fragmentInstance.onRefresh();
+                    refreshLists();
                 }
             });
             Toast.makeText(context,"WATCHED", Toast.LENGTH_LONG).show();
@@ -439,7 +449,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                                     movies.get(position).getReleaseDate(), movies.get(position).getRating(), movies.get(position).isAdult(), datatime);
                             MovieDatabase.insertMovie(mdm2, 1, MainActivity.getMovieDatabase());
                             notifyRequestID= scheduleNotify(datatime,position);
-                            fragmentInstance.onRefresh();
+                            refreshLists();
                         }
                         else {
                             // provare la base di dati
@@ -447,7 +457,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                             Log.i("DATATIME","ID"+ movies.get(position).getId() +"DATATIME: "+ datatime);
                             md.updateNotifyDate(movies.get(position).getId(),datatime);
                             deleteNotify(notifyRequestID);
-                            fragmentInstance.onRefresh();
+                            refreshLists();
                         }
                         String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
                         Toast tostato = Toast.makeText(context, testo, Toast.LENGTH_SHORT);
@@ -604,4 +614,19 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         WorkManager.getInstance().cancelWorkById(notify_ID);
     }
 
+    public void refreshLists(){
+        if(fragmentInstance!= null){
+            fragmentInstance.onRefresh();
+        }else{
+            MoviesFragment mf1 = (MoviesFragment)spa.getItem(0);
+            mf1.setArgFragType(MoviesFragment.Type.NOTIFY);
+            mf1.onRefresh();
+            MoviesFragment mf2 = (MoviesFragment)spa.getItem(1);
+            mf2.setArgFragType(MoviesFragment.Type.SUGGESTED);
+            mf2.onRefresh();
+            MoviesFragment mf3 = (MoviesFragment)spa.getItem(2);
+            mf3.setArgFragType(MoviesFragment.Type.WATCHED);
+            mf3.onRefresh();
+        }
+    }
 }
