@@ -274,7 +274,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         final View formElementsView = inflater.inflate(R.layout.form_elements,
                 null, false);
 
-        scheduleNotification(getNotification("50 second delay"), 50000);
+
 
         // You have to list down your form elements
         /*final CheckBox myCheckBox = (CheckBox) formElementsView
@@ -460,7 +460,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                                     movies.get(position).getReleaseDate(), movies.get(position).getRating(), movies.get(position).isAdult(), datatime);
                             MovieDatabase.insertMovie(mdm2, 1, MainActivity.getMovieDatabase());
                             //notifyRequestID= scheduleNotify(datatime,position);
-                            scheduleNotification(getNotification("5 second delay"), 5000);
+                            scheduleNotification(getNotification(movies.get(position).getTitle()),datatime);
                             refreshLists();
                         }
                         else {
@@ -469,7 +469,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                             Log.i("DATATIME","ID"+ movies.get(position).getId() +"DATATIME: "+ datatime);
                             md.updateNotifyDate(movies.get(position).getId(),datatime);
                             //deleteNotify(notifyRequestID);
-                            scheduleNotification(getNotification("5 second delay"), 5000);
+                            //inserire funzione deleteNotify
+                            scheduleNotification(getNotification(movies.get(position).getTitle()),datatime);
                             refreshLists();
                         }
                         String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
@@ -626,21 +627,23 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     }*/
 
 
-    private void scheduleNotification(Notification notification, int delay) {
+    private void scheduleNotification(Notification notification, /*int delay*/Date d) {
 
         Intent notificationIntent = new Intent(context, NotificationPublisher.class);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        long futureInMillis = SystemClock.elapsedRealtime() + delay;
+        //long futureInMillis = SystemClock.elapsedRealtime() + delay;
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+        //alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP,d.getTime(), pendingIntent);
+
     }
 
     private Notification getNotification(String content) {
         Notification.Builder builder = new Notification.Builder(context);
-        builder.setContentTitle("Scheduled Notification");
+        builder.setContentTitle("WARNING!!! REMEMBER MOVIE: ");
         builder.setContentText(content);
         builder.setDefaults(DEFAULT_ALL);
         builder.setSmallIcon(R.drawable.ic_launcher_foreground);
