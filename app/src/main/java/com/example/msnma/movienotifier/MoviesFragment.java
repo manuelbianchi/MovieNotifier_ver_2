@@ -73,14 +73,15 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
     View rootView;
 
     static MoviesFragment fragmentInstance;
+    static SectionsPageAdapter spa;
 
-    public static MoviesFragment newInstance(Type fragType, boolean twoPane) {
+    public static MoviesFragment newInstance(Type fragType, boolean twoPane, SectionsPageAdapter spa) {
         MoviesFragment fragment = new MoviesFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_FRAG_TYPE, fragType);
         args.putBoolean(ARG_FRAG_TWO_PANE, twoPane);
         fragment.setArguments(args);
-        fragmentInstance = fragment;
+        spa = spa;
         return fragment;
     }
 
@@ -172,7 +173,12 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
                 public void success(List<Movie> result) {
                     movies = new ArrayList<>(result);
                     if (moviesView != null) {
-                        MoviesAdapter adapter = new MoviesAdapter(getContext(), movies, fragmentInstance);
+                        MoviesAdapter adapter;
+                        if(spa != null){
+                            adapter = new MoviesAdapter(getContext(), movies, spa);
+                        }else{
+                            adapter = new MoviesAdapter(getContext(), movies, fragmentInstance);
+                        }
                         if(fragType.toString().equals("SEARCH") || fragType.toString().equals("SUGGESTED")){
                             adapter.setTipo(String.valueOf(MoviesFragment.Type.SUGGESTED));
                         }else if(fragType.toString().equals("NOTIFY")){

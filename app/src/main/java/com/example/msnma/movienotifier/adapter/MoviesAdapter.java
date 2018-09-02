@@ -171,8 +171,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             holder.removeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    MovieDatabase md = new MovieDatabase(context);
-                    md.deleteMovie(movies.get(position).getId());
+                    MovieDatabase.deleteMovie(movies.get(position).getId(), MainActivity.getMovieDatabase());
                     refreshLists();
                 }
             });
@@ -243,8 +242,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             holder.removeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    MovieDatabase md = new MovieDatabase(context);
-                    md.deleteMovie(movies.get(position).getId());
+                    MovieDatabase.deleteMovie(movies.get(position).getId(), MainActivity.getMovieDatabase());
                     refreshLists();
                 }
             });
@@ -452,9 +450,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                         }
                         else {
                             // provare la base di dati
-                            MovieDatabase md = new MovieDatabase(context);
                             Log.i("DATATIME","ID"+ movies.get(position).getId() +"DATATIME: "+ datatime);
-                            md.updateNotifyDate(movies.get(position).getId(),datatime);
+                            MovieDatabase.updateNotifyDate(movies.get(position).getId(),datatime, MainActivity.getMovieDatabase());
                             deleteNotify(notifyRequestID);
                             refreshLists();
                         }

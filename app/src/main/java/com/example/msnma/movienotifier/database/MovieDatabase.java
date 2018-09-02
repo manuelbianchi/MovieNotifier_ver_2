@@ -264,16 +264,16 @@ public class MovieDatabase extends SQLiteOpenHelper {
         return movies;
     }
 
-    public void deleteMovie(long tado_id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_MOVIE, MOVIE_ID + " = ?",
+    public static void deleteMovie(long tado_id, MovieDatabase db) {
+        SQLiteDatabase database = db.getReadableDatabase();
+        database.delete(TABLE_MOVIE, MOVIE_ID + " = ?",
                 new String[] { String.valueOf(tado_id) });
-        deleteMovieType(tado_id);
+        deleteMovieType(tado_id, db);
     }
 
-    public void deleteMovieType(long tado_id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_MOVIE_TYPE, M_ID + " = ?",
+    public static void deleteMovieType(long tado_id, MovieDatabase db) {
+        SQLiteDatabase database = db.getReadableDatabase();
+        database.delete(TABLE_MOVIE_TYPE, M_ID + " = ?",
                 new String[] { String.valueOf(tado_id) });
     }
 
@@ -290,14 +290,14 @@ public class MovieDatabase extends SQLiteOpenHelper {
 
     //da sistemare.
 
-    public int updateNotifyDate(long id, Date datetime ) {
-        SQLiteDatabase db = this.getWritableDatabase();
+    public static int updateNotifyDate(long id, Date datetime, MovieDatabase db) {
+        SQLiteDatabase database = db.getReadableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(notify_datetime,datetime.toString());
 
         // updating row
-        return db.update(TABLE_MOVIE, values,  M_ID + " = ?",
+        return database.update(TABLE_MOVIE, values,  M_ID + " = ?",
                 new String[] { String.valueOf(id) });
     }
 

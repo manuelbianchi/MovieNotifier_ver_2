@@ -37,11 +37,11 @@ public class SectionsPageAdapter extends FragmentStatePagerAdapter
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return MoviesFragment.newInstance(MoviesFragment.Type.NOTIFY, twoPane);
+                return MoviesFragment.newInstance(MoviesFragment.Type.NOTIFY, twoPane, this);
             case 1:
-                return MoviesFragment.newInstance(MoviesFragment.Type.SUGGESTED, twoPane);
+                return MoviesFragment.newInstance(MoviesFragment.Type.SUGGESTED, twoPane, this);
             case 2:
-                return MoviesFragment.newInstance(MoviesFragment.Type.WATCHED, twoPane);
+                return MoviesFragment.newInstance(MoviesFragment.Type.WATCHED, twoPane, this);
             default:
                 return null;
         }
