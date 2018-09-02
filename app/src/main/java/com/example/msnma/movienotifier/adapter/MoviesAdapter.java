@@ -1,12 +1,17 @@
 package com.example.msnma.movienotifier.adapter;
 
 import android.annotation.TargetApi;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.SystemClock;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.text.Spannable;
@@ -35,6 +40,7 @@ import com.example.msnma.movienotifier.SectionsPageAdapter;
 import com.example.msnma.movienotifier.database.MovieDatabase;
 import com.example.msnma.movienotifier.databaseModel.MovieDBModel;
 import com.example.msnma.movienotifier.model.Movie;
+import com.example.msnma.movienotifier.notify.NotificationPublisher;
 import com.example.msnma.movienotifier.notify.NotifyWorker;
 
 import java.util.Calendar;
@@ -50,11 +56,12 @@ import androidx.work.WorkManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.support.v4.app.NotificationCompat.DEFAULT_ALL;
 import static com.example.msnma.movienotifier.notify.Constants.KEY_MOVIE;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder>{
 
-    private UUID notifyRequestID = null;
+    private PendingIntent pendingIntent = null;
 
 
     private Context context;
@@ -67,9 +74,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     private EditText eReminderTime;
     private boolean active = false;
 
-    private int mese;
-    private int anno;
-    private int giorno;
+    private int mese = (Calendar.getInstance().getTime().getMonth())+1;
+    private int anno = (Calendar.getInstance().getTime().getYear())+1900 ;
+    private int giorno = Calendar.getInstance().getTime().getDate();
     private int ora;
     private int minuti;
     private int secondi;
@@ -172,6 +179,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                 @Override
                 public void onClick(View view) {
                     MovieDatabase.deleteMovie(movies.get(position).getId(), MainActivity.getMovieDatabase());
+                    deleteNotify(pendingIntent);
                     refreshLists();
                 }
             });
@@ -445,14 +453,16 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                                     movies.get(position).getPosterUrl(), movies.get(position).getBackdropUrl(), movies.get(position).getTrailerUrl(),
                                     movies.get(position).getReleaseDate(), movies.get(position).getRating(), movies.get(position).isAdult(), datatime);
                             MovieDatabase.insertMovie(mdm2, 1, MainActivity.getMovieDatabase());
-                            notifyRequestID= scheduleNotify(datatime,position);
+                            //notifyRequestID= scheduleNotify(datatime,position);
+                            pendingIntent=scheduleNotification(getNotification(movies.get(position).getTitle()),datatime,movies.get(position).getId());
                             refreshLists();
                         }
                         else {
                             // provare la base di dati
                             Log.i("DATATIME","ID"+ movies.get(position).getId() +"DATATIME: "+ datatime);
                             MovieDatabase.updateNotifyDate(movies.get(position).getId(),datatime, MainActivity.getMovieDatabase());
-                            deleteNotify(notifyRequestID);
+                            deleteNotify(pendingIntent);
+                            pendingIntent=scheduleNotification(getNotification(movies.get(position).getTitle()),datatime, movies.get(position).getId());
                             refreshLists();
                         }
                         String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
@@ -539,6 +549,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         if (active)
         {
             fromDateEtxt.requestFocus();
+            fromDateEtxt.setText(giorno+"-"+mese+"-"+anno);
         }
     }
 
@@ -571,7 +582,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         return builder.build();
     }
 
-    private UUID scheduleNotify(Date d, int position) {
+    /*private UUID scheduleNotify(Date d, int position) {
         Constraints myConstraints = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             myConstraints = new Constraints.Builder()
@@ -584,11 +595,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         //d.getTimeToMillis();
         long delayToPass = specificTimeToTrigger - currentTime;
 
-        /*OneTimeWorkRequest compressionWork =
-                new OneTimeWorkRequest.Builder(NotifyWorker.class)
-                        .setInputData(message)
-                        .setInitialDelay(delayToPass, TimeUnit.MILLISECONDS)
-                        .build();*/
+
 
         //inizialmente è molto semplice la notifica
         OneTimeWorkRequest notifyRequest =
@@ -604,11 +611,48 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
         return notify_ID;
 
+    }*/
+
+
+    /*public void deleteNotify(UUID notify_ID) {
+        WorkManager.getInstance().cancelWorkById(notify_ID);
+    }*/
+
+
+    private PendingIntent scheduleNotification(Notification notification, /*int delay*/Date d, int id) {
+
+        Intent notificationIntent = new Intent(context, NotificationPublisher.class);
+        //
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, id);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //long futureInMillis = SystemClock.elapsedRealtime() + delay;
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        //alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP,d.getTime(), pendingIntent);
+        return pendingIntent;
+
     }
 
-    public void deleteNotify(UUID notify_ID) {
-        WorkManager.getInstance().cancelWorkById(notify_ID);
+    public void deleteNotify(PendingIntent p)
+    {
+        AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        manager.cancel(p);//cancel the alarm manager of the pending intent
+
     }
+
+    private Notification getNotification(String content) {
+        Notification.Builder builder = new Notification.Builder(context);
+        builder.setContentTitle("WARNING!!! REMEMBER MOVIE: ");
+        builder.setContentText(content);
+        builder.setDefaults(DEFAULT_ALL);
+        builder.setSmallIcon(R.drawable.ic_launcher_foreground);
+        return builder.build();
+    }
+
+
+
 
     public void refreshLists(){
         if(fragmentInstance!= null){
