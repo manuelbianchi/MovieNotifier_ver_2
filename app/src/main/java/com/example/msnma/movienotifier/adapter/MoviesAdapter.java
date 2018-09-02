@@ -43,6 +43,8 @@ import com.example.msnma.movienotifier.model.Movie;
 import com.example.msnma.movienotifier.notify.NotificationPublisher;
 import com.example.msnma.movienotifier.notify.NotifyWorker;
 
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -68,6 +70,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     private List<Movie> movies;
     private View itemView;
     private RecyclerView rv;
+
 
     //per la data
     private EditText fromDateEtxt;
@@ -181,7 +184,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                     MovieDatabase md = new MovieDatabase(context);
                     md.deleteMovie(movies.get(position).getId());
 
-                    deleteNotify(movies.get(position).getId());
+                    Log.i("DELETENOTIFY:"," "+(int)movies.get(position).getNotifyDate().getTime());
+                    deleteNotify((int)movies.get(position).getNotifyDate().getTime());
                     refreshLists();
                 }
             });
@@ -462,7 +466,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                                     movies.get(position).getReleaseDate(), movies.get(position).getRating(), movies.get(position).isAdult(), datatime);
                             MovieDatabase.insertMovie(mdm2, 1, MainActivity.getMovieDatabase());
                             //notifyRequestID= scheduleNotify(datatime,position);
-                            scheduleNotification(getNotification(movies.get(position).getTitle()),datatime,movies.get(position).getId());
+                            //for(int i=0; i<movies.size(); i++)
+                            //Log.i("SCHEDULE_NOTIFY:"," "+movies.get(i).getId());
+                            //ho notato che da un ID astronomico.
+
+                            scheduleNotification(getNotification(movies.get(position).getTitle()),datatime,(int)datatime.getTime());
                             refreshLists();
                         }
                         else {
@@ -473,7 +481,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                             //deleteNotify(notifyRequestID);
                             //inserire funzione deleteNotify
                             deleteNotify(movies.get(position).getId());
-                            scheduleNotification(getNotification(movies.get(position).getTitle()),datatime, movies.get(position).getId());
+                            scheduleNotification(getNotification(movies.get(position).getTitle()),datatime,(int)datatime.getTime());
                             refreshLists();
                         }
                         String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
@@ -633,6 +641,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     private PendingIntent scheduleNotification(Notification notification, /*int delay*/Date d, int id) {
 
         Intent notificationIntent = new Intent(context, NotificationPublisher.class);
+        Log.i("SCHEDULE_NOTIFY:"," "+id);
         //
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, id);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
