@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.os.SystemClock;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.text.Spannable;
@@ -41,27 +40,22 @@ import com.example.msnma.movienotifier.database.MovieDatabase;
 import com.example.msnma.movienotifier.databaseModel.MovieDBModel;
 import com.example.msnma.movienotifier.model.Movie;
 import com.example.msnma.movienotifier.notify.NotificationPublisher;
-import com.example.msnma.movienotifier.notify.NotifyWorker;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
-import androidx.work.Constraints;
 import androidx.work.Data;
-import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static android.support.v4.app.NotificationCompat.DEFAULT_ALL;
-import static com.example.msnma.movienotifier.notify.Constants.KEY_MOVIE;
+//import static com.example.msnma.movienotifier.notify.Constants.KEY_MOVIE;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder>{
 
-    private PendingIntent pendingIntent = null;
+    //private PendingIntent pendingIntent = null;
 
 
     private Context context;
@@ -179,7 +173,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                 @Override
                 public void onClick(View view) {
                     MovieDatabase.deleteMovie(movies.get(position).getId(), MainActivity.getMovieDatabase());
-                    deleteNotify(pendingIntent);
+                    deleteNotify(movies.get(position).getId());
                     refreshLists();
                 }
             });
@@ -266,16 +260,46 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
          * Inflate the XML view. activity_main is in
          * res/layout/form_elements.xml
          */
+        boolean modifyOn = false;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View formElementsView = inflater.inflate(R.layout.form_elements,
                 null, false);
+        final RadioGroup genderRadioGroup = (RadioGroup) formElementsView
+                .findViewById(R.id.NotifyAlertRadioGroup);
+
+        if(modify == true)
+        {
+          Date d =movies.get(position).getNotifyDate();
+          if(d.equals(movies.get(position).getReleaseDate()))
+            genderRadioGroup.check(genderRadioGroup.getChildAt(1).getId());
+          else if(d.getDate() == ((movies.get(position).getReleaseDate().getDate())-1))
+          {
+              genderRadioGroup.check(genderRadioGroup.getChildAt(0).getId());
+          }
+          else
+          {
+              modifyOn = true;
+              genderRadioGroup.check(genderRadioGroup.getChildAt(2).getId());
+              fromDateEtxt = (EditText) formElementsView.findViewById(R.id.nameEditText);
+              fromDateEtxt.setEnabled(true);
+              fromDateEtxt.requestFocus();
+              giorno = d.getDate();
+              mese = d.getMonth()+1;
+              anno = d.getYear()+1900;
+              fromDateEtxt.setText(giorno+"-"+mese+"-"+anno);
+
+
+
+          }
+          ora = d.getHours();
+          minuti= d.getMinutes();
+        }
 
         // You have to list down your form elements
         /*final CheckBox myCheckBox = (CheckBox) formElementsView
                 .findViewById(R.id.myCheckBox);*/
 
-        final RadioGroup genderRadioGroup = (RadioGroup) formElementsView
-                .findViewById(R.id.NotifyAlertRadioGroup);
+
         //nuovo codice
         genderRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
         {
@@ -304,12 +328,16 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         /*final EditText nameEditText = (EditText) formElementsView
                 .findViewById(R.id.nameEditText);*/
 
+
         //parte data
-        fromDateEtxt = (EditText) formElementsView.findViewById(R.id.nameEditText);
-        fromDateEtxt.setEnabled(active);
-        fromDateEtxt.setClickable(active);
-        fromDateEtxt.setInputType(InputType.TYPE_NULL);
-        fromDateEtxt.requestFocus();
+        if(modifyOn == false)
+        {
+            fromDateEtxt = (EditText) formElementsView.findViewById(R.id.nameEditText);
+            fromDateEtxt.setEnabled(active);
+            fromDateEtxt.setClickable(active);
+            fromDateEtxt.setInputType(InputType.TYPE_NULL);
+            fromDateEtxt.requestFocus();
+        }
 
 
         //metodo data
@@ -343,8 +371,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         });
 
         //parte orario
-        ora = 9;
-        minuti = 30;
+        if(modify == false) {
+            ora = 9;
+            minuti = 30;
+        }
 
         eReminderTime = (EditText) formElementsView.findViewById(R.id.timeEditText);
         eReminderTime.setText( ora + ":" + minuti);
@@ -378,6 +408,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
         // the alert dialog
         new AlertDialog.Builder(context).setView(formElementsView)
                 .setTitle(movies.get(position).getTitle()+" Notify")
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i)
+                    {
+                        dialogInterface.cancel();
+                    }
+                })
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @TargetApi(11)
                     public void onClick(DialogInterface dialog, int id) {
@@ -416,7 +453,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                             release.setHours(ora);
                             release.setMinutes(minuti);
                             release.setSeconds(secondi);
-                            datatime = new Date (anno-1900,mese-1,giorno,ora, minuti, secondi);
+                            datatime = new Date (release.getYear(),release.getMonth(),release.getDate(),ora, minuti, secondi);
 
                         }
                         else if(selectedRadioButton.getId() == R.id.OneDayRadioButton) {
@@ -426,7 +463,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                             release.setHours(ora);
                             release.setMinutes(minuti);
                             release.setSeconds(secondi);
-                            datatime = new Date (anno-1900,mese-1,giorno-1,release.getHours(),release.getMinutes(), release.getSeconds());
+                            datatime = new Date (release.getYear(),release.getMonth(),release.getDate()-1,ora, minuti, secondi);
                         }
                         else if(selectedRadioButton.getId() == R.id.OnRadioButton) {
                             toastString += "Selected radio button is: " + fromDateEtxt.getText() +"!\n";
@@ -452,17 +489,22 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                             MovieDBModel mdm2 = new MovieDBModel(movies.get(position).getId(), movies.get(position).getTitle(), movies.get(position).getOverview(),
                                     movies.get(position).getPosterUrl(), movies.get(position).getBackdropUrl(), movies.get(position).getTrailerUrl(),
                                     movies.get(position).getReleaseDate(), movies.get(position).getRating(), movies.get(position).isAdult(), datatime);
-                            MovieDatabase.insertMovie(mdm2, 1, MainActivity.getMovieDatabase());
+                            long movieId = MovieDatabase.insertMovie(mdm2, 1, MainActivity.getMovieDatabase());
                             //notifyRequestID= scheduleNotify(datatime,position);
-                            pendingIntent=scheduleNotification(getNotification(movies.get(position).getTitle()),datatime,movies.get(position).getId());
+                            //for(int i=0; i<movies.size(); i++)
+                            //Log.i("SCHEDULE_NOTIFY:"," "+movies.get(i).getId());
+                            //ho notato che da un ID astronomico.
+
+                            scheduleNotification(getNotification(movies.get(position).getTitle()),datatime,movieId);
                             refreshLists();
                         }
                         else {
                             // provare la base di dati
-                            Log.i("DATATIME","ID"+ movies.get(position).getId() +"DATATIME: "+ datatime);
                             MovieDatabase.updateNotifyDate(movies.get(position).getId(),datatime, MainActivity.getMovieDatabase());
-                            deleteNotify(pendingIntent);
-                            pendingIntent=scheduleNotification(getNotification(movies.get(position).getTitle()),datatime, movies.get(position).getId());
+                            //deleteNotify(notifyRequestID);
+                            //inserire funzione deleteNotify
+                            deleteNotify(movies.get(position).getId());
+                            scheduleNotification(getNotification(movies.get(position).getTitle()),datatime,movies.get(position).getId());
                             refreshLists();
                         }
                         String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
@@ -574,58 +616,26 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     }
 
 
-    private Data createInputDataForUri(Movie movie) {
+    /*private Data createInputDataForUri(Movie movie) {
         Data.Builder builder = new Data.Builder();
         if (movie != null) {
             builder.putString(KEY_MOVIE,movie.getTitle());
         }
         return builder.build();
-    }
-
-    /*private UUID scheduleNotify(Date d, int position) {
-        Constraints myConstraints = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            myConstraints = new Constraints.Builder()
-                    .setRequiresDeviceIdle(true)
-                    .build();
-        }
-        long currentTime= System.currentTimeMillis();
-        //Calendar c = new Date;
-        long specificTimeToTrigger = d.getTime();
-        //d.getTimeToMillis();
-        long delayToPass = specificTimeToTrigger - currentTime;
-
-
-
-        //inizialmente è molto semplice la notifica
-        OneTimeWorkRequest notifyRequest =
-                new OneTimeWorkRequest.Builder(NotifyWorker.class)
-                        .setInputData(createInputDataForUri(movies.get(position)))
-                        .setConstraints(myConstraints)
-                        .setInitialDelay(delayToPass,TimeUnit.MILLISECONDS)
-                        .build();
-        mWorkManager.enqueue(notifyRequest);
-        UUID notify_ID = notifyRequest.getId();
-
-        //WorkManager.getInstance().enqueue(compressionWork);
-
-        return notify_ID;
-
     }*/
 
 
-    /*public void deleteNotify(UUID notify_ID) {
-        WorkManager.getInstance().cancelWorkById(notify_ID);
-    }*/
 
 
-    private PendingIntent scheduleNotification(Notification notification, /*int delay*/Date d, int id) {
+    private PendingIntent scheduleNotification(Notification notification, /*int delay*/Date d, long id) {
 
         Intent notificationIntent = new Intent(context, NotificationPublisher.class);
+        Log.i("SCHEDULE_NOTIFY:"," "+id);
         //
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, id);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, (int)id);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        //PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, (int)id, notificationIntent, PendingIntent.FLAG_ONE_SHOT);
 
         //long futureInMillis = SystemClock.elapsedRealtime() + delay;
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
@@ -635,10 +645,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     }
 
-    public void deleteNotify(PendingIntent p)
+    public void deleteNotify(int id)
     {
+        Intent notificationIntent = new Intent(context, NotificationPublisher.class);
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        manager.cancel(p);//cancel the alarm manager of the pending intent
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, notificationIntent, PendingIntent.FLAG_ONE_SHOT);
+        manager.cancel(pendingIntent);//cancel the alarm manager of the pending intent
 
     }
 
