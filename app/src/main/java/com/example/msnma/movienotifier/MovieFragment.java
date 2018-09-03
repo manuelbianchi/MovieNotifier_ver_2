@@ -25,7 +25,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.msnma.movienotifier.event.ShowMovieEvent;
 import com.example.msnma.movienotifier.model.Movie;
-import com.example.msnma.movienotifier.notify.NotificationReceiver;
+//import com.example.msnma.movienotifier.notify.NotificationReceiver;
 import com.example.msnma.movienotifier.util.MoviesUtil;
 import com.example.msnma.movienotifier.util.Util;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -65,10 +65,7 @@ public class MovieFragment extends BaseFragment {
     TextView ratingView;
     @BindView(R.id.overview)
     TextView overviewView;
-    @BindView(R.id.show)
-    Button showNotif;
-    @BindView(R.id.cancel)
-    Button cancelNotif;
+
 //    @BindView(R.id.favorite)
 //    FloatingActionButton favoriteView;        todo change this in the way that will handle the add to watched list
 
@@ -80,7 +77,7 @@ public class MovieFragment extends BaseFragment {
         //parte push
         //showNotif = (Button) findViewById(R.id.show);
         //cancelNotif = (Button) findViewById(R.id.cancel);
-        showNotif.setOnClickListener(new View.OnClickListener() {
+        /*showNotif.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -99,9 +96,9 @@ public class MovieFragment extends BaseFragment {
                 NotificationManager notifManager = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
                 notifManager.notify(0, notification);
             }
-        });
+        });*/
 
-        cancelNotif.setOnClickListener(new View.OnClickListener() {
+        /*cancelNotif.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -112,7 +109,7 @@ public class MovieFragment extends BaseFragment {
                 }
 
             }
-        });
+        });*/
 
 
         if (movie != null) {

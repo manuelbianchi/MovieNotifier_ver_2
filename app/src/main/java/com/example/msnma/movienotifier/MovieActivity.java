@@ -25,7 +25,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import com.example.msnma.movienotifier.notify.NotificationReceiver;
+//import com.example.msnma.movienotifier.notify.NotificationReceiver;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 

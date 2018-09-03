@@ -128,9 +128,10 @@ public class MovieDatabase extends SQLiteOpenHelper {
     }
 
     //CRUDs
-    public static void insertMovie(MovieDBModel movie, Integer typeId, MovieDatabase db) {
+    public static long insertMovie(MovieDBModel movie, Integer typeId, MovieDatabase db) {
         SQLiteDatabase database = db.getWritableDatabase();
-        if(checkMovieUniqueness(movie.getTitle(), db)) {        //NON VOGLIO INSERIRE PIù VOLTE LO STESSO FILM
+        long movieId = 0;
+        if (checkMovieUniqueness(movie.getTitle(), db)) {        //NON VOGLIO INSERIRE PIù VOLTE LO STESSO FILM
             ContentValues values = new ContentValues();
             values.put(TITLE, movie.getTitle());
             values.put(OVERVIEW, movie.getOverview());
@@ -141,16 +142,17 @@ public class MovieDatabase extends SQLiteOpenHelper {
             values.put(RATING, movie.getRating());
             values.put(ADULT, movie.isAdult());
             //inizio nuovo codice
-            if(typeId == 1) {
+            if (typeId == 1) {
                 values.put(notify_datetime, movie.getNotifyDate().toString());
                 Log.i("TYPEID", "Siamo dentro");
             }
             //else values.putNull(NOTIFY_TIME_DATE);
             //fine nuovo codice
             // insert row
-            long movieId = database.insert(TABLE_MOVIE, null, values);
+            movieId = database.insert(TABLE_MOVIE, null, values);
             insertMovieType(movieId, typeId, db);
         }
+        return movieId;
     }
 
     public static void insertMovieType(Long movieId, Integer typeId, MovieDatabase db){

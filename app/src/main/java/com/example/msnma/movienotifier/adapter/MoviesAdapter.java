@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
-import android.os.SystemClock;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.text.Spannable;
@@ -41,25 +40,18 @@ import com.example.msnma.movienotifier.database.MovieDatabase;
 import com.example.msnma.movienotifier.databaseModel.MovieDBModel;
 import com.example.msnma.movienotifier.model.Movie;
 import com.example.msnma.movienotifier.notify.NotificationPublisher;
-import com.example.msnma.movienotifier.notify.NotifyWorker;
 
-import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
-import androidx.work.Constraints;
 import androidx.work.Data;
-import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static android.support.v4.app.NotificationCompat.DEFAULT_ALL;
-import static com.example.msnma.movienotifier.notify.Constants.KEY_MOVIE;
+//import static com.example.msnma.movienotifier.notify.Constants.KEY_MOVIE;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder>{
 
@@ -185,7 +177,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                     md.deleteMovie(movies.get(position).getId());
 
                     Log.i("DELETENOTIFY:"," "+(int)movies.get(position).getNotifyDate().getTime());
-                    deleteNotify((int)movies.get(position).getNotifyDate().getTime());
+                    deleteNotify(movies.get(position).getId());
                     refreshLists();
                 }
             });
@@ -505,13 +497,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                             MovieDBModel mdm2 = new MovieDBModel(movies.get(position).getId(), movies.get(position).getTitle(), movies.get(position).getOverview(),
                                     movies.get(position).getPosterUrl(), movies.get(position).getBackdropUrl(), movies.get(position).getTrailerUrl(),
                                     movies.get(position).getReleaseDate(), movies.get(position).getRating(), movies.get(position).isAdult(), datatime);
-                            MovieDatabase.insertMovie(mdm2, 1, MainActivity.getMovieDatabase());
+                            long movieId = MovieDatabase.insertMovie(mdm2, 1, MainActivity.getMovieDatabase());
                             //notifyRequestID= scheduleNotify(datatime,position);
                             //for(int i=0; i<movies.size(); i++)
                             //Log.i("SCHEDULE_NOTIFY:"," "+movies.get(i).getId());
                             //ho notato che da un ID astronomico.
 
-                            scheduleNotification(getNotification(movies.get(position).getTitle()),datatime,(int)datatime.getTime());
+                            scheduleNotification(getNotification(movies.get(position).getTitle()),datatime,movieId);
                             refreshLists();
                         }
                         else {
@@ -522,7 +514,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                             //deleteNotify(notifyRequestID);
                             //inserire funzione deleteNotify
                             deleteNotify(movies.get(position).getId());
-                            scheduleNotification(getNotification(movies.get(position).getTitle()),datatime,(int)datatime.getTime());
+                            scheduleNotification(getNotification(movies.get(position).getTitle()),datatime,movies.get(position).getId());
                             refreshLists();
                         }
                         String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
@@ -634,60 +626,26 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     }
 
 
-    private Data createInputDataForUri(Movie movie) {
+    /*private Data createInputDataForUri(Movie movie) {
         Data.Builder builder = new Data.Builder();
         if (movie != null) {
             builder.putString(KEY_MOVIE,movie.getTitle());
         }
         return builder.build();
-    }
-
-    /*private UUID scheduleNotify(Date d, int position) {
-        Constraints myConstraints = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            myConstraints = new Constraints.Builder()
-                    .setRequiresDeviceIdle(true)
-                    .build();
-        }
-        long currentTime= System.currentTimeMillis();
-        //Calendar c = new Date;
-        long specificTimeToTrigger = d.getTime();
-        //d.getTimeToMillis();
-        long delayToPass = specificTimeToTrigger - currentTime;
-
-
-
-        //inizialmente è molto semplice la notifica
-        OneTimeWorkRequest notifyRequest =
-                new OneTimeWorkRequest.Builder(NotifyWorker.class)
-                        .setInputData(createInputDataForUri(movies.get(position)))
-                        .setConstraints(myConstraints)
-                        .setInitialDelay(delayToPass,TimeUnit.MILLISECONDS)
-                        .build();
-        mWorkManager.enqueue(notifyRequest);
-        UUID notify_ID = notifyRequest.getId();
-
-        //WorkManager.getInstance().enqueue(compressionWork);
-
-        return notify_ID;
-
     }*/
 
 
-    /*public void deleteNotify(UUID notify_ID) {
-        WorkManager.getInstance().cancelWorkById(notify_ID);
-    }*/
 
 
-    private PendingIntent scheduleNotification(Notification notification, /*int delay*/Date d, int id) {
+    private PendingIntent scheduleNotification(Notification notification, /*int delay*/Date d, long id) {
 
         Intent notificationIntent = new Intent(context, NotificationPublisher.class);
         Log.i("SCHEDULE_NOTIFY:"," "+id);
         //
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, id);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, (int)id);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
         //PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, notificationIntent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, (int)id, notificationIntent, PendingIntent.FLAG_ONE_SHOT);
 
         //long futureInMillis = SystemClock.elapsedRealtime() + delay;
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);

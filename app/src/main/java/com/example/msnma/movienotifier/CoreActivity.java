@@ -1,17 +1,10 @@
 package com.example.msnma.movienotifier;
 
 
-import android.annotation.TargetApi;
-import android.app.AlarmManager;
-import android.app.FragmentTransaction;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -19,35 +12,23 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import com.example.msnma.movienotifier.MoviesFragment;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TabHost;
-import android.widget.Toast;
 
 import com.example.msnma.movienotifier.adapter.MoviesAdapter;
-import com.example.msnma.movienotifier.notify.Constants;
-import com.example.msnma.movienotifier.notify.NotificationReceiver;
 
 import com.example.msnma.movienotifier.event.TwoPaneEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import butterknife.BindView;
 
 import static android.support.v4.app.NotificationCompat.DEFAULT_ALL;
-import static android.support.v4.view.PagerAdapter.POSITION_NONE;
-import static com.example.msnma.movienotifier.notify.Constants.CHANNEL_ID;
-import static com.google.common.reflect.Reflection.initialize;
-import static java.security.AccessController.getContext;
+//import static com.example.msnma.movienotifier.notify.Constants.CHANNEL_ID;
 
 public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
 
@@ -199,7 +180,7 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
 
     }
 
-    public static void notifyPush(String message, Context context)
+    /*public static void notifyPush(String message, Context context)
     {
         /*Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         //Intent intent = new Intent(context,NotificationReceiver.class);
@@ -234,7 +215,7 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
         //codice di un altro programma
 
         // Make a channel if necessary
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Create the NotificationChannel, but only on API 26+ because
             // the NotificationChannel class is new and not in the support library
             CharSequence name = Constants.VERBOSE_NOTIFICATION_CHANNEL_NAME;
@@ -263,7 +244,7 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
 
         // Show the notification
         NotificationManagerCompat.from(context).notify(Constants.NOTIFICATION_ID, builder.build());
-    }
+    }*/
 
 }
 
