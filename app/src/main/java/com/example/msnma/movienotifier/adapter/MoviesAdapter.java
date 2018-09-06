@@ -148,7 +148,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
         holder.release_date.setText(sb);
         if(getTipo().equals("NOTIFY")) {
-            Toast.makeText(context, "Notify", Toast.LENGTH_LONG).show();
+//            Toast.makeText(context, "Notify", Toast.LENGTH_LONG).show();
             holder.movie_notify.setVisibility(View.VISIBLE);
             holder.notifyButton.setVisibility(View.GONE);
             holder.changeDateTimeButton.setVisibility(View.VISIBLE);
@@ -193,8 +193,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                             movies.get(position).getReleaseDate(), movies.get(position).getRating(), movies.get(position).isAdult(),null);
                     MovieDatabase.updateMovieType(movies.get(position).getId(), 2,MainActivity.getMovieDatabase());
                     String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
-                    Toast tostato = Toast.makeText(context, testo, Toast.LENGTH_SHORT);
-                    tostato.show();
+//                    Toast tostato = Toast.makeText(context, testo, Toast.LENGTH_SHORT);
+//                    tostato.show();
                     refreshLists();
                 }
             });
@@ -209,7 +209,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             holder.notifyButton.setVisibility(View.VISIBLE);
             holder.watchedButton.setVisibility(View.VISIBLE);
             holder.changeDateTimeButton.setVisibility(View.GONE);
-            Toast.makeText(context,"Suggested", Toast.LENGTH_LONG).show();
+//            Toast.makeText(context,"Suggested", Toast.LENGTH_LONG).show();
 
             holder.notifyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -225,8 +225,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                             movies.get(position).getReleaseDate(), movies.get(position).getRating(), movies.get(position).isAdult(),null);
                     MovieDatabase.insertMovie(mdm, 2, MainActivity.getMovieDatabase());
                     String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
-                    Toast tostato = Toast.makeText(context, testo, Toast.LENGTH_SHORT);
-                    tostato.show();
+//                    Toast tostato = Toast.makeText(context, testo, Toast.LENGTH_SHORT);
+//                    tostato.show();
                     refreshLists();
                 }
             });
@@ -248,7 +248,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                     refreshLists();
                 }
             });
-            Toast.makeText(context,"WATCHED", Toast.LENGTH_LONG).show();
+//            Toast.makeText(context,"WATCHED", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -507,17 +507,17 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                             scheduleNotification(getNotification(movies.get(position).getTitle()),datatime,movies.get(position).getId());
                             refreshLists();
                         }
-                        String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
-                        Toast tostato = Toast.makeText(context, testo, Toast.LENGTH_SHORT);
-                        tostato.show();
+//                        String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
+//                        Toast tostato = Toast.makeText(context, testo, Toast.LENGTH_SHORT);
+//                        tostato.show();
                         /*
                          * Getting the value of an EditText.
                          */
                         /*toastString += "Name is: " + nameEditText.getText()
                                 + "!\n";*/
 
-                        Toast toast =  Toast.makeText(context, toastString, Toast.LENGTH_LONG);
-                        toast.show();
+//                        Toast toast =  Toast.makeText(context, toastString, Toast.LENGTH_LONG);
+//                        toast.show();
 
                         dialog.cancel();
                     }

@@ -3,6 +3,7 @@ package com.example.msnma.movienotifier;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -18,6 +19,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.msnma.movienotifier.adapter.MoviesAdapter;
 
@@ -33,6 +35,7 @@ import static android.support.v4.app.NotificationCompat.DEFAULT_ALL;
 public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
 
     private static Context context;
+    ProgressDialog pd;
     //Context context;
     SectionsPageAdapter mSectionsPageAdapter;
     @BindView(R.id.movies)
@@ -41,6 +44,8 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
     TabLayout tabLayout;
 
     boolean twoPane;
+
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,11 +110,32 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
         });
         mViewPager.setCurrentItem(0);
 
+        pd = new ProgressDialog(this);
+        pd.setTitle("Loading...");
+        pd.setMessage("Please wait.");
+        pd.setCancelable(false);
+        pd.show();
+
+        final Thread thread = new Thread(){
+            @Override
+            public void run(){
+                try{
+                    for(int i = 0; i<100; i++){
+                        sleep(50);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }finally{
+                    pd.dismiss();
+                }
+            }
+        };
+        thread.start();
+
         EventBus.getDefault().postSticky(new TwoPaneEvent(twoPane));
     }
 
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
+    public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_second, menu);
         //MenuItem item = menu.findItem(R.id.search);
@@ -118,8 +144,7 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -139,23 +164,20 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
 
 
 
-    public void pressAccountButton(MenuItem item)
-    {
+    public void pressAccountButton(MenuItem item) {
         Intent intent = new Intent(this, AccountActivity.class);
         startActivity(intent);
     }
 
     /** Called when the user taps the Send button */
-    public void pressAddButton(View view)
-    {
+    public void pressAddButton(View view) {
         Intent intent = new Intent(this, SecondActivity.class);
         startActivity(intent);
     }
 
     //nuovo codice
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         super.onResume();
         //Toast.makeText(getBaseContext(),"PORCO DIO",Toast.LENGTH_LONG).show();
         if (!(mSectionsPageAdapter == null)) {

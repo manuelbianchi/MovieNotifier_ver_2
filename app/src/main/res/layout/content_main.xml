@@ -36,7 +36,7 @@
         android:layout_marginRight="32dp"
         android:layout_marginTop="32dp"
         android:gravity="center"
-        android:text="Click the add button for begin or  to go to your profile  for setting up your preference."
+        android:text="Click the search button for begin or  to go to your profile for setting up your preference."
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
