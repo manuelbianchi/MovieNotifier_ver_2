@@ -35,7 +35,7 @@ import static android.support.v4.app.NotificationCompat.DEFAULT_ALL;
 public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
 
     private static Context context;
-    ProgressDialog pd;
+    static ProgressDialog pd;
     //Context context;
     SectionsPageAdapter mSectionsPageAdapter;
     @BindView(R.id.movies)
@@ -66,6 +66,12 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        pd = new ProgressDialog(this);
+        pd.setTitle("Loading...");
+        pd.setMessage("Please wait.");
+        pd.setCancelable(false);
+        pd.show();
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
@@ -109,28 +115,6 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
 
         });
         mViewPager.setCurrentItem(0);
-
-        pd = new ProgressDialog(this);
-        pd.setTitle("Loading...");
-        pd.setMessage("Please wait.");
-        pd.setCancelable(false);
-        pd.show();
-
-        final Thread thread = new Thread(){
-            @Override
-            public void run(){
-                try{
-                    for(int i = 0; i<100; i++){
-                        sleep(50);
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }finally{
-                    pd.dismiss();
-                }
-            }
-        };
-        thread.start();
 
         EventBus.getDefault().postSticky(new TwoPaneEvent(twoPane));
     }
@@ -200,6 +184,10 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
 
+    }
+
+    public static ProgressDialog getPd() {
+        return pd;
     }
 
     /*public static void notifyPush(String message, Context context)

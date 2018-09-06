@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.msnma.movienotifier.CoreActivity;
 import com.example.msnma.movienotifier.MainActivity;
 import com.example.msnma.movienotifier.MovieFragment;
 import com.example.msnma.movienotifier.MoviesFragment;
@@ -134,6 +135,7 @@ public class MoviesUtil {
             movies = filterSuggestedMovies(movies);
             deleteMovies(activity, type);
             saveMovies(activity, type, movies);
+            CoreActivity.getPd().dismiss();
 //            MovieDatabase.saveMoviesOnDB(movies, "notify");
 //            MovieDatabase.saveMoviesOnDB(movies, "watched");
         } catch (JSONException e) {
