@@ -66,6 +66,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     //per la data
     private EditText fromDateEtxt;
     private EditText eReminderTime;
+    private TextView rdText;
     private boolean active = false;
 
     private int mese = (Calendar.getInstance().getTime().getMonth())+1;
@@ -295,6 +296,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
           minuti= d.getMinutes();
         }
 
+        rdText = (TextView) formElementsView.findViewById(R.id.releaseText);
+        String yourString = String.valueOf(movies.get(position).getReleaseDate());
+        String date = yourString.substring(0, 10);
+        String year = yourString.substring(yourString.length()-5,yourString.length());
+        rdText.setText(date+year);
         // You have to list down your form elements
         /*final CheckBox myCheckBox = (CheckBox) formElementsView
                 .findViewById(R.id.myCheckBox);*/
