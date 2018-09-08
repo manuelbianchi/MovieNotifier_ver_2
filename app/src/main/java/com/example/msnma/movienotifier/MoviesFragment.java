@@ -70,10 +70,12 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
     @BindView(R.id.movies)
     RecyclerView moviesView;
 
-    View rootView;
+    static TextView emptyView;
+    static View emptyRootView;
+    static View rootView;
 
     static MoviesFragment fragmentInstance;
-    static SectionsPageAdapter spa;
+    static SectionsPageAdapter spAdapter;
 
     public static MoviesFragment newInstance(Type fragType, boolean twoPane, SectionsPageAdapter spa) {
         MoviesFragment fragment = new MoviesFragment();
@@ -81,7 +83,8 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
         args.putSerializable(ARG_FRAG_TYPE, fragType);
         args.putBoolean(ARG_FRAG_TWO_PANE, twoPane);
         fragment.setArguments(args);
-        spa = spa;
+        fragmentInstance = fragment;
+        spAdapter = spa;
         return fragment;
     }
 
@@ -93,6 +96,7 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
         args.putString(ARG_FRAG_QUERY, query);
         fragment.setArguments(args);
         fragmentInstance = fragment;
+        spAdapter = null;
         return fragment;
     }
 
@@ -115,6 +119,7 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_movies_list, container, false);
+        onCreateEmptyRootView(inflater, container, savedInstanceState);
         ButterKnife.bind(this, rootView);
         init();
         return rootView;
@@ -174,8 +179,8 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
                     movies = new ArrayList<>(result);
                     if (moviesView != null) {
                         MoviesAdapter adapter;
-                        if(spa != null){
-                            adapter = new MoviesAdapter(getContext(), movies, spa);
+                        if(spAdapter != null){
+                            adapter = new MoviesAdapter(getContext(), movies, spAdapter);
                         }else{
                             adapter = new MoviesAdapter(getContext(), movies, fragmentInstance);
                         }
@@ -200,13 +205,13 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
             };
             switch (fragType) {
                 case NOTIFY:
-                    MoviesUtil.getNotifyMeMovies(getActivity(), callback);
+                    MoviesUtil.getNotifyMeMovies(getActivity(), callback, fragmentInstance);
                     break;
                 case SUGGESTED:
                     MoviesUtil.getSuggestedMovies(getActivity(), callback);
                     break;
                 case WATCHED:
-                    MoviesUtil.getWatchedMovies(getActivity(), callback);
+                    MoviesUtil.getWatchedMovies(getActivity(), callback, fragmentInstance);
                     break;
                 case SEARCH:
                     MoviesUtil.getSeachMovies(getActivity(), query, callback);
@@ -241,4 +246,17 @@ public class MoviesFragment extends BaseFragment implements SwipeRefreshLayout.O
         fragType = type;
     }
 
+    public static TextView getEmptyView(){
+        return emptyView;
+    }
+
+    public void onCreateEmptyRootView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        emptyRootView = inflater.inflate(R.layout.fragment_movies_list_empty, container, false);
+        emptyView = (TextView) rootView.findViewById(R.id.empty_view);
+    }
+
+    public void setEmptyRootView(){
+        rootView = emptyRootView;
+
+    }
 }

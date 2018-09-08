@@ -46,6 +46,7 @@ public class MoviesUtil {
     private static final String TYPE_SUGGESTED = "popular";
 
     private static final MovieMapper mapper = new MovieMapper();
+    static MoviesFragment fragment;
 
     public static boolean isWatched(Context context, Movie movie) {
         Cursor cursor = context.getContentResolver()
@@ -70,16 +71,18 @@ public class MoviesUtil {
         }
     }
 
-    public static void getNotifyMeMovies(Activity activity, MoviesCallback callback) {
+    public static void getNotifyMeMovies(Activity activity, MoviesCallback callback, MoviesFragment frag) {
         getMovies(activity, TYPE_NOTIFY, callback);
+        fragment = frag;
     }
 
     public static void getSuggestedMovies(Activity activity, MoviesCallback callback) {
         getMovies(activity, TYPE_SUGGESTED, callback);
     }
 
-    public static void getWatchedMovies(Activity activity, MoviesCallback callback) {
+    public static void getWatchedMovies(Activity activity, MoviesCallback callback, MoviesFragment frag) {
         getMovies(activity, TYPE_WATCHED, callback);
+        fragment = frag;
     }
 
     public static void getSeachMovies(Activity activity, String query, MoviesCallback callback) {
@@ -100,6 +103,7 @@ public class MoviesUtil {
                             @Override
                             public void run() {
                                 callback.success(movies);
+                                isMoviesListEmpty(movies.size());
                             }
                         });
                     } catch (ParseException e) {
@@ -341,5 +345,11 @@ public class MoviesUtil {
         }
 
         return freeMovies;
+    }
+
+    public static void isMoviesListEmpty(int moviesSize){
+        if(moviesSize==0){
+            fragment.setEmptyRootView();
+        }
     }
 }

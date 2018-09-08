@@ -502,7 +502,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                             //ho notato che da un ID astronomico.
 
                             scheduleNotification(getNotification(movies.get(position).getTitle()),datatime,movieId);
-                            refreshLists();
                         }
                         else {
                             // provare la base di dati
@@ -511,7 +510,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                             //inserire funzione deleteNotify
                             deleteNotify(movies.get(position).getId());
                             scheduleNotification(getNotification(movies.get(position).getTitle()),datatime,movies.get(position).getId());
-                            refreshLists();
                         }
 //                        String testo = "Added " + movies.get(position).getTitle() + "\n" + "in tab watched";
 //                        Toast tostato = Toast.makeText(context, testo, Toast.LENGTH_SHORT);
@@ -524,7 +522,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
 //                        Toast toast =  Toast.makeText(context, toastString, Toast.LENGTH_LONG);
 //                        toast.show();
-
+                        refreshLists();
                         dialog.cancel();
                     }
 
@@ -591,8 +589,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     }
 
     //parte per attivare/disattivare l'editText
-    private void actv(final boolean active)
-    {
+    private void actv(final boolean active) {
         fromDateEtxt.setEnabled(active);
         if (active)
         {
@@ -651,8 +648,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
     }
 
-    public void deleteNotify(int id)
-    {
+    public void deleteNotify(int id) {
         Intent notificationIntent = new Intent(context, NotificationPublisher.class);
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, notificationIntent, PendingIntent.FLAG_ONE_SHOT);

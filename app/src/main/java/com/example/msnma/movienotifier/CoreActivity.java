@@ -1,16 +1,11 @@
 package com.example.msnma.movienotifier;
 
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.view.ViewPager;
@@ -19,7 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.msnma.movienotifier.adapter.MoviesAdapter;
 
@@ -29,14 +24,11 @@ import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 
-import static android.support.v4.app.NotificationCompat.DEFAULT_ALL;
-//import static com.example.msnma.movienotifier.notify.Constants.CHANNEL_ID;
-
 public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
 
     private static Context context;
     static ProgressDialog pd;
-    //Context context;
+
     SectionsPageAdapter mSectionsPageAdapter;
     @BindView(R.id.movies)
     ViewPager mViewPager;
@@ -44,8 +36,6 @@ public class CoreActivity extends AppCompatActivity implements TabLayout.OnTabSe
     TabLayout tabLayout;
 
     boolean twoPane;
-
-    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
